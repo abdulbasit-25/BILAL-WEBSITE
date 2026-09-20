@@ -24,6 +24,7 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 - Added homepage hero section and CTA layout
 - Added services overview and equipment detail pages
 - Added about, coverage, FAQ, and contact pages
+- Added Privacy Policy and Terms & Conditions pages with footer links
 - Added responsive mobile navigation
 - Added reveal/scroll animation behaviors
 - Added simple cookie/privacy banner
