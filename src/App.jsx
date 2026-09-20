@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   Menu,
   X,
@@ -21,9 +21,10 @@ import {
   Package,
   Zap,
   Gauge,
-  Shield,
+  ShieldCheck,
   Users,
   MapPin,
+  Radio,
   Clock,
   Mail,
   Facebook,
@@ -34,8 +35,9 @@ import {
   ClipboardCheck,
   ArrowUp,
   Copy,
-  Eye,
-  EyeOff,
+  Check,
+  Cookie,
+  Quote,
 } from "lucide-react";
 
 /* ============================================================
@@ -43,45 +45,69 @@ import {
    ============================================================ */
 const CONFIG = {
   companyName: "Keep Hauling",
+  tagline: "Truck Dispatching & Freight Management",
   phone: "(404) 470-3820",
   phoneRaw: "+14044703820",
   email: "ba6306529@gmail.com",
   address: "3500 Adams St, Apt 2S, Bellwood, IL 60104",
+  city: "Bellwood",
+  state: "IL",
+  zip: "60104",
   dispatchPercentage: "5–8%",
   yearsExperience: "5+",
   loadsBooked: "500+",
   statesCovered: "48",
   supportHours: "24/7",
+  siteUrl: "https://www.keephauling.example",
   social: { facebook: "#", instagram: "#", linkedin: "#" },
 };
+
+/* ============================================================
+   DESIGN TOKENS
+   A freight/highway-driven palette: deep road-night navy, a hot
+   dispatch-console red, and a caution-tape amber pulled from
+   the industry itself rather than a generic SaaS gradient.
+   ============================================================ */
 const COLORS = {
   navy: "#0B1D33",
-  charcoal: "#111827",
+  navyDeep: "#061220",
+  steel: "#1F3A5F",
+  charcoal: "#12181F",
   white: "#FFFFFF",
-  gray: "#F3F4F6",
+  paper: "#EEF1F5",
+  ink: "#4B5563",
   red: "#E63946",
   redDark: "#C62B38",
+  amber: "#F4A81E",
 };
 
-/* Verified free-to-use (Unsplash License) stock photography */
-const IMAGES = {
-  hero: "https://images.openai.com/static-rsc-4/iVSk6nYHnAyjgPU6tvfFY69OjhBmaOu-zcVGMDcUz9eqeRKi7lgonb2RPV9Gc6NFpPxzofoKkGpOoTs6RAkZP5tCX7XQ0YdkP1Fr7QthJ4-rBSEiFKOqz8FhTddAMUA7phugqSsK65u3CKDC2bkm9N3M2uxDbknr14eLVSKzGwsXV4T1Wh3b_I08zQbTv9sK?purpose=fullsize",
-  dryVan:
-    "https://images.openai.com/static-rsc-4/ZlcZA3XmMe2A_TxVNVQ4gYLVxItDzmySLUlU0EJfAKWuZmPJHjqXZeDb9at5MeXtitPcYzvCS1erhY9Se7PpJV7fWVeNUMg0vSv276Km-Fq4wMZRRsFBXV2PlTgzERQ1y36nuhrUrg6fPKT-_ATL3ydXTlTQnof3iCGssGCiT10Pm5Bt9Fk7Sx-GK80WLNd8?purpose=fullsize",
-  flatbed:
-    "https://images.openai.com/static-rsc-4/5LmSfXhEcXJTcXXZGHWaqcNd0CEpEEoSMs_PBQK_gmtKWaQrBOVvw2IVtZOUSPhxr4s8wiO33T1ZQdNWtio_Yr69mMoUxWNV6ptJ6Rvox7UgpyWEsXX1ijyJgO7B_URoY_F2_dSgIZVll5zL-hZuqcMgNSfvMARHqmaHQzKF9Mc7nva91svFNwuyXJNs-YtC?purpose=fullsize",
-  stepDeck:
-    "https://www.pandamech.com/wp-content/uploads/2025/06/Step-Deck-trailer.jpg",
-  boxTruck:
-    "https://images.openai.com/static-rsc-4/8RQu1Z21F6qdIvyW1skfZYkiAgiR_82-EXc5q2bmQd-LaYdo0dC9HoFbFOsjE8sWwKblKdJs9vUyoQ1aEw4SZXteGLM_mXBlBzEdezFKSGgoEuFwQVDr5Lg5-iuKEa5n7IPMlItH6ubUAqgM3iPv40BwVwS4MOSYfB7O6z7fnB9OTG19R9k2vAdmJocXcWSb?purpose=fullsize",
-  warehouse:
-    "https://www.amsc-usa.com/wp-content/uploads/2022/08/large-distribution-warehouse.jpg",
-  hotshot: "https://www.gatormade.com/wp-content/uploads/2019/01/image3.jpeg",
-  poweronly:
-    "https://images.openai.com/static-rsc-4/-0Kfv-2RJwzwf6XACWNniVmTj9KD7FsJnobvhqMEpf6rqCofxtw2Ji8GJchoLdaHHgThGrEstxFRk9r08X485MDO0LP0zrVvwhTABIDJE608wuyFMrHbj_hqugOb7LvcO2ZohRCIjXX0Ug4WSoW4o2-qLOMfngxlNFQmnVmkT6_JhJlWmQ5gmsKvoClZ0h6z?purpose=fullsize",
-  reefer:
-    "https://images.openai.com/static-rsc-4/GvoIwtE4VM3dda2Z8N7o2i6PAmNKMk3zL7OxTtdqOX1cVB81yz70x1d_K624Fo3Um-6C0Q2jVVmortHD3PoO9wGY8jv4nxBBYJFA3d5A07vOftwvKB8scdEPltrQ_o8NqmOo0QBGFHGiWQfN417ZVkXcAAWufakA05FYI7C9_nMGwuE3BqGzHvgOaCAcdwQe?purpose=fullsize",
-};
+/* Sample lane pricing — illustrative only, not live rate data. */
+const LANE_SNAPSHOT = [
+  {
+    origin: "Atlanta, GA",
+    dest: "Dallas, TX",
+    equip: "Dry Van",
+    rate: "$2.10–2.35/mi",
+  },
+  {
+    origin: "Chicago, IL",
+    dest: "Charlotte, NC",
+    equip: "Reefer",
+    rate: "$2.40–2.65/mi",
+  },
+  {
+    origin: "Houston, TX",
+    dest: "Phoenix, AZ",
+    equip: "Flatbed",
+    rate: "$2.05–2.30/mi",
+  },
+  {
+    origin: "Memphis, TN",
+    dest: "Newark, NJ",
+    equip: "Power Only",
+    rate: "$1.95–2.20/mi",
+  },
+];
 
 const US_STATES = [
   "AL",
@@ -137,14 +163,13 @@ const US_STATES = [
 ];
 
 /* ============================================================
-   EQUIPMENT — each has its own image + own page
+   EQUIPMENT — each has its own icon treatment + own page
    ============================================================ */
 const EQUIPMENT = [
   {
     key: "dry-van",
     name: "Dry Van",
     icon: Container,
-    image: IMAGES.dryVan,
     tagline: "Steady freight, dialed-in lanes.",
     desc: "The most common trailer on the road — and the easiest to keep loaded consistently when someone is actively working your lanes.",
     benefits: [
@@ -164,7 +189,6 @@ const EQUIPMENT = [
     key: "reefer",
     name: "Reefer",
     icon: Snowflake,
-    image: IMAGES.reefer,
     tagline: "Temperature-controlled freight, handled right.",
     desc: "Reefer freight leaves less room for error — tighter windows, stricter brokers, and freight that can't sit. Our dispatchers know the difference.",
     benefits: [
@@ -184,7 +208,6 @@ const EQUIPMENT = [
     key: "flatbed",
     name: "Flatbed",
     icon: Layers,
-    image: IMAGES.flatbed,
     tagline: "Open-deck freight, planned around securement.",
     desc: "Flatbed work rewards dispatchers who understand tarping, securement, and permit requirements — not just who can find a load board listing.",
     benefits: [
@@ -204,7 +227,6 @@ const EQUIPMENT = [
     key: "step-deck",
     name: "Step Deck",
     icon: Gauge,
-    image: IMAGES.stepDeck,
     tagline: "Taller loads, planned the right way.",
     desc: "Step deck freight often means oversized or height-restricted loads. We plan routes and permits around the load, not the other way around.",
     benefits: [
@@ -224,7 +246,6 @@ const EQUIPMENT = [
     key: "box-truck",
     name: "Box Truck",
     icon: Package,
-    image: IMAGES.boxTruck,
     tagline: "Regional and local freight, kept full.",
     desc: "Box truck operators need tighter, more local freight — we focus on regional lanes and quick-turn loads instead of forcing you into OTR runs.",
     benefits: [
@@ -244,7 +265,6 @@ const EQUIPMENT = [
     key: "power-only",
     name: "Power Only",
     icon: Zap,
-    image: IMAGES.poweronly,
     tagline: "Your tractor, matched to trailers that pay.",
     desc: "Power-only freight moves fast and can leave you guessing on trailer pools and drop yards. We keep you matched to freight that actually works.",
     benefits: [
@@ -264,7 +284,6 @@ const EQUIPMENT = [
     key: "hotshot",
     name: "Hotshot",
     icon: Truck,
-    image: IMAGES.hotshot,
     tagline: "Time-sensitive freight, moved fast.",
     desc: "Hotshot freight lives and dies on speed and communication. Our dispatchers prioritize fast-turn loads that fit your rig and timeline.",
     benefits: [
@@ -360,7 +379,7 @@ const STEPS = [
 const WHY_US = [
   { icon: Users, text: "Experienced Dispatchers" },
   { icon: DollarSign, text: "Aggressive Rate Negotiation" },
-  { icon: Shield, text: "Personalized Dispatching" },
+  { icon: ShieldCheck, text: "Personalized Dispatching" },
   { icon: MapPin, text: "Nationwide Freight Coverage" },
   { icon: MessageSquare, text: "Transparent Communication" },
   { icon: Truck, text: "Carrier-Focused Service" },
@@ -384,6 +403,8 @@ const VALUES = [
   },
 ];
 
+/* Placeholder testimonials shown for layout — swap for verified
+   customer feedback (with permission) before launch. */
 const TESTIMONIALS = [
   {
     name: "Marcus R.",
@@ -471,6 +492,44 @@ const FAQS = [
 ];
 
 /* ============================================================
+   SEO — per-route title/description, used to update <head>
+   ============================================================ */
+const SEO_META = {
+  "/": {
+    title: `${CONFIG.companyName} | Nationwide Truck Dispatch Service`,
+    description: `${CONFIG.companyName} finds loads, negotiates rates, and handles broker paperwork for owner-operators and small fleets nationwide. ${CONFIG.supportHours} dispatch support.`,
+  },
+  "/services": {
+    title: `Dispatch Services | ${CONFIG.companyName}`,
+    description:
+      "Load searching, rate negotiation, broker communication, and paperwork — full-service truck dispatching for every trailer type.",
+  },
+  "/how-it-works": {
+    title: `How It Works | ${CONFIG.companyName}`,
+    description:
+      "See exactly how our dispatch process works, from onboarding your truck to your first negotiated load.",
+  },
+  "/about": {
+    title: `About Us | ${CONFIG.companyName}`,
+    description: `Meet the dispatch team behind ${CONFIG.companyName} and the carrier-first approach we bring to every load.`,
+  },
+  "/coverage": {
+    title: `Nationwide Coverage | ${CONFIG.companyName}`,
+    description: `${CONFIG.companyName} dispatches freight across all ${CONFIG.statesCovered} contiguous states with dispatchers who know regional lane patterns.`,
+  },
+  "/faq": {
+    title: `Dispatch FAQ | ${CONFIG.companyName}`,
+    description:
+      "Answers to the most common questions carriers ask before signing up for dispatch service.",
+  },
+  "/contact": {
+    title: `Get Started | ${CONFIG.companyName}`,
+    description:
+      "Tell us about your truck and lanes — a dispatcher follows up the same business day.",
+  },
+};
+
+/* ============================================================
    ROUTER
    ============================================================ */
 function useRoute() {
@@ -493,6 +552,78 @@ function useRoute() {
 }
 function navigate(path) {
   window.location.hash = path;
+}
+
+/* ============================================================
+   SEO HEAD MANAGEMENT
+   Updates document title / meta description / canonical / JSON-LD
+   on every route change. No external head-management library needed.
+   ============================================================ */
+function setMeta(name, content, attr = "name") {
+  if (!content) return;
+  let el = document.head.querySelector(`meta[${attr}="${name}"]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, name);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
+}
+function setLinkCanonical(href) {
+  let el = document.head.querySelector('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", "canonical");
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", href);
+}
+function setJSONLD(id, data) {
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement("script");
+    el.type = "application/ld+json";
+    el.id = id;
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(data);
+}
+function useSEO(route) {
+  useEffect(() => {
+    document.documentElement.lang = "en";
+    const base = route.split("/").slice(0, 2).join("/") || "/";
+    const meta = SEO_META[base] || SEO_META["/"];
+    document.title = meta.title;
+    setMeta("description", meta.description);
+    setMeta("og:title", meta.title, "property");
+    setMeta("og:description", meta.description, "property");
+    setMeta("og:type", "website", "property");
+    setMeta("twitter:card", "summary");
+    setMeta("twitter:title", meta.title);
+    setMeta("twitter:description", meta.description);
+    setLinkCanonical(`${CONFIG.siteUrl}/#${route}`);
+
+    setJSONLD("ld-org", {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": `${CONFIG.siteUrl}/#business`,
+      name: CONFIG.companyName,
+      description: SEO_META["/"].description,
+      telephone: CONFIG.phoneRaw,
+      email: CONFIG.email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: CONFIG.address,
+        addressLocality: CONFIG.city,
+        addressRegion: CONFIG.state,
+        postalCode: CONFIG.zip,
+        addressCountry: "US",
+      },
+      areaServed: "United States",
+      url: CONFIG.siteUrl,
+      priceRange: "$$",
+    });
+  }, [route]);
 }
 
 /* ============================================================
@@ -526,8 +657,8 @@ function Reveal({ children, delay = 0, className = "" }) {
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s ease ${delay}ms`,
+        transform: visible ? "translateY(0)" : "translateY(18px)",
+        transition: `opacity 0.5s ease ${delay}ms, transform 0.5s ease ${delay}ms`,
       }}
     >
       {children}
@@ -538,7 +669,7 @@ function Reveal({ children, delay = 0, className = "" }) {
 function Eyebrow({ children }) {
   return (
     <div
-      className="inline-flex items-center gap-2 text-sm font-bold tracking-wide mb-3"
+      className="inline-flex items-center gap-2 text-sm font-bold mb-3"
       style={{ color: COLORS.red, fontFamily: "'Inter', sans-serif" }}
     >
       <span
@@ -559,9 +690,11 @@ function Headline({
   dark = false,
   className = "",
   size = "text-4xl md:text-5xl",
+  as = "h2",
 }) {
+  const Tag = as;
   return (
-    <h1
+    <Tag
       className={`${size} leading-[1.05] mb-4 ${className}`}
       style={{
         fontFamily: "'Bebas Neue', sans-serif",
@@ -570,7 +703,7 @@ function Headline({
       }}
     >
       {children}
-    </h1>
+    </Tag>
   );
 }
 function PrimaryButton({
@@ -620,12 +753,20 @@ function SecondaryButton({ children, href, className = "", dark = false }) {
     </a>
   );
 }
-function RouteLink({ to, children, className = "", style = {}, onNavigate }) {
+function RouteLink({
+  to,
+  children,
+  className = "",
+  style = {},
+  onNavigate,
+  active,
+}) {
   return (
     <a
       href={`#${to}`}
       className={className}
       style={style}
+      aria-current={active ? "page" : undefined}
       onClick={(e) => {
         e.preventDefault();
         navigate(to);
@@ -636,27 +777,117 @@ function RouteLink({ to, children, className = "", style = {}, onNavigate }) {
     </a>
   );
 }
-function PageHero({ eyebrow, title, subtitle, image }) {
+
+/* Graphic hero backdrop used in place of stock photography — a dashed
+   route line with waypoint markers, echoing a dispatcher's route map. */
+function RouteBackdrop({ variant = "hero" }) {
+  const dim = variant === "hero" ? "0 0 1200 500" : "0 0 1200 320";
+  return (
+    <svg
+      viewBox={dim}
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 w-full h-full"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="rb-fade" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor={COLORS.steel} stopOpacity="0.55" />
+          <stop offset="100%" stopColor={COLORS.navy} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {Array.from({ length: 14 }).map((_, r) =>
+        Array.from({ length: 30 }).map((_, c) => (
+          <circle
+            key={`${r}-${c}`}
+            cx={c * 42 + 10}
+            cy={r * 42 + 10}
+            r="1.2"
+            fill="rgba(255,255,255,0.06)"
+          />
+        )),
+      )}
+      <path
+        d="M -20 420 C 250 380, 380 480, 560 340 S 900 120, 1250 160"
+        fill="none"
+        stroke={COLORS.amber}
+        strokeOpacity="0.45"
+        strokeWidth="3"
+        strokeDasharray="2 14"
+        strokeLinecap="round"
+      />
+      <circle cx="560" cy="340" r="6" fill={COLORS.red} />
+      <circle
+        cx="560"
+        cy="340"
+        r="12"
+        fill="none"
+        stroke={COLORS.red}
+        strokeOpacity="0.4"
+        strokeWidth="2"
+      />
+      <circle cx="1120" cy="150" r="6" fill={COLORS.amber} />
+      <rect x="0" y="0" width="1200" height="500" fill="url(#rb-fade)" />
+    </svg>
+  );
+}
+
+/* Icon-forward panel used in place of a stock trailer photo — a
+   consistent, load-board-inspired treatment for each equipment type. */
+function EquipmentPanel({ Icon, size = 40, className = "" }) {
+  return (
+    <div
+      className={`relative flex items-center justify-center overflow-hidden ${className}`}
+      style={{
+        background: `linear-gradient(135deg, ${COLORS.steel} 0%, ${COLORS.navy} 100%)`,
+      }}
+    >
+      <svg
+        className="absolute inset-0 w-full h-full opacity-20"
+        aria-hidden="true"
+      >
+        <pattern
+          id="diag"
+          width="18"
+          height="18"
+          patternTransform="rotate(45)"
+          patternUnits="userSpaceOnUse"
+        >
+          <line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="18"
+            stroke={COLORS.amber}
+            strokeWidth="2"
+          />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#diag)" />
+      </svg>
+      <Icon
+        size={size}
+        color={COLORS.white}
+        strokeWidth={1.5}
+        className="relative"
+      />
+    </div>
+  );
+}
+
+function PageHero({ eyebrow, title, subtitle }) {
   return (
     <section
-      className="relative pt-32 pb-16 md:pt-40 md:pb-20"
+      className="relative pt-32 pb-16 md:pt-40 md:pb-20 overflow-hidden"
       style={{ background: COLORS.navy }}
     >
-      {image && (
-        <div className="absolute inset-0">
-          <img src={image} alt="" className="w-full h-full object-cover" />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(100deg, rgba(11,31,51,0.95) 30%, rgba(11,31,51,0.72) 100%)",
-            }}
-          />
-        </div>
-      )}
+      <RouteBackdrop variant="page" />
       <div className="relative max-w-7xl mx-auto px-5 md:px-8">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <Headline dark size="text-4xl md:text-6xl" className="max-w-3xl">
+        <Headline
+          as="h1"
+          dark
+          size="text-4xl md:text-6xl"
+          className="max-w-3xl"
+        >
           {title}
         </Headline>
         {subtitle && (
@@ -672,8 +903,19 @@ function PageHero({ eyebrow, title, subtitle, image }) {
   );
 }
 function Breadcrumb({ items }) {
+  const crumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.label,
+      item: it.to ? `${CONFIG.siteUrl}/#${it.to}` : undefined,
+    })),
+  };
   return (
-    <div
+    <nav
+      aria-label="Breadcrumb"
       className="flex flex-wrap items-center gap-2 text-xs mb-6"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
@@ -681,17 +923,24 @@ function Breadcrumb({ items }) {
         <span key={i} className="flex items-center gap-2">
           {i > 0 && <ChevronRight size={12} style={{ color: "#8A94A0" }} />}
           {it.to ? (
-            <RouteLink to={it.to} style={{ color: "#B8C1CC" }}>
+            <RouteLink to={it.to} style={{ color: "#6B7280" }}>
               {it.label}
             </RouteLink>
           ) : (
-            <span style={{ color: COLORS.navy, fontWeight: 700 }}>
+            <span
+              style={{ color: COLORS.navy, fontWeight: 700 }}
+              aria-current="page"
+            >
               {it.label}
             </span>
           )}
         </span>
       ))}
-    </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(crumbSchema) }}
+      />
+    </nav>
   );
 }
 
@@ -746,7 +995,10 @@ function Navbar({ route }) {
             </span>
           </RouteLink>
 
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav
+            aria-label="Primary"
+            className="hidden lg:flex items-center gap-7"
+          >
             {NAV_LINKS.map((l) => (
               <div
                 key={l.to}
@@ -756,7 +1008,8 @@ function Navbar({ route }) {
               >
                 <RouteLink
                   to={l.to}
-                  className="flex items-center gap-1 text-sm font-semibold tracking-wide py-2"
+                  active={isActive(l.to)}
+                  className="flex items-center gap-1 text-sm font-semibold py-2"
                   style={{
                     color: isActive(l.to) ? COLORS.white : "#B8C1CC",
                     fontFamily: "'Inter', sans-serif",
@@ -809,7 +1062,8 @@ function Navbar({ route }) {
           <button
             className="lg:hidden"
             onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
             style={{ color: COLORS.white }}
           >
             {open ? <X size={26} /> : <Menu size={26} />}
@@ -821,7 +1075,7 @@ function Navbar({ route }) {
             className="lg:hidden px-5 pb-6 pt-2 max-h-[80vh] overflow-y-auto"
             style={{ background: COLORS.navy }}
           >
-            <nav className="flex flex-col gap-1">
+            <nav aria-label="Mobile" className="flex flex-col gap-1">
               {NAV_LINKS.map((l) => (
                 <div
                   key={l.to}
@@ -830,6 +1084,7 @@ function Navbar({ route }) {
                   <div className="flex items-center justify-between">
                     <RouteLink
                       to={l.to}
+                      active={isActive(l.to)}
                       onNavigate={() => setOpen(false)}
                       className="py-3 text-base font-semibold flex-1"
                       style={{
@@ -846,6 +1101,8 @@ function Navbar({ route }) {
                         }
                         style={{ color: COLORS.white }}
                         className="p-2"
+                        aria-label="Toggle services submenu"
+                        aria-expanded={mobileServicesOpen}
                       >
                         <ChevronDown
                           size={18}
@@ -853,6 +1110,7 @@ function Navbar({ route }) {
                             transform: mobileServicesOpen
                               ? "rotate(180deg)"
                               : "none",
+                            transition: "transform 0.2s ease",
                           }}
                         />
                       </button>
@@ -914,14 +1172,21 @@ function Navbar({ route }) {
         >
           <Phone size={16} /> CALL NOW
         </a>
-        <PrimaryButton
-          href="/contact"
-          isRoute
-          className="flex-1 !px-0"
-          style={{ clipPath: "none" }}
+        <a
+          href="#/contact"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/contact");
+          }}
+          className="flex-1 flex items-center justify-center gap-2 py-4 font-bold text-sm"
+          style={{
+            background: COLORS.red,
+            color: COLORS.white,
+            fontFamily: "'Inter', sans-serif",
+          }}
         >
           GET STARTED
-        </PrimaryButton>
+        </a>
       </div>
     </>
   );
@@ -935,10 +1200,10 @@ function TrustBar() {
     <section className="py-10 md:py-14" style={{ background: COLORS.charcoal }}>
       <div className="max-w-7xl mx-auto px-5 md:px-8">
         <p
-          className="text-center text-sm font-bold tracking-widest mb-8"
+          className="text-center text-sm font-bold mb-8"
           style={{ color: "#9CA6B2", fontFamily: "'Inter', sans-serif" }}
         >
-          TRUSTED BY OWNER-OPERATORS &amp; CARRIERS ACROSS THE USA
+          Trusted by owner-operators &amp; carriers across the USA
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {TRUST_STATS.map((s) => (
@@ -965,12 +1230,67 @@ function TrustBar() {
     </section>
   );
 }
+
+/* A "load-board" style strip of sample lanes, grounding the design
+   in the actual subject matter instead of generic decoration. */
+function LaneSnapshot() {
+  return (
+    <section className="py-8" style={{ background: COLORS.steel }}>
+      <div className="max-w-7xl mx-auto px-5 md:px-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Radio size={14} style={{ color: COLORS.amber }} />
+          <span
+            className="text-xs font-bold"
+            style={{ color: COLORS.amber, fontFamily: "'Inter', sans-serif" }}
+          >
+            SAMPLE LANE SNAPSHOT — illustrative pricing, not live rates
+          </span>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {LANE_SNAPSHOT.map((l) => (
+            <div
+              key={`${l.origin}-${l.dest}`}
+              className="flex items-center justify-between gap-3 px-4 py-3"
+              style={{ background: "rgba(255,255,255,0.06)" }}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Route
+                  size={15}
+                  style={{ color: COLORS.white, flexShrink: 0 }}
+                />
+                <span
+                  className="text-xs font-semibold truncate"
+                  style={{
+                    color: COLORS.white,
+                    fontFamily: "'Inter', sans-serif",
+                  }}
+                >
+                  {l.origin} → {l.dest}
+                </span>
+              </div>
+              <span
+                className="text-xs font-bold flex-shrink-0"
+                style={{
+                  color: COLORS.amber,
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                {l.rate}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ServicesGrid({ limit }) {
   const list = limit ? SERVICES.slice(0, limit) : SERVICES;
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {list.map((s, i) => (
-        <Reveal key={s.title} delay={i * 60}>
+        <Reveal key={s.title} delay={i * 50}>
           <div className="p-8 h-full" style={{ background: COLORS.navy }}>
             <div
               className="w-12 h-12 flex items-center justify-center mb-6"
@@ -1005,43 +1325,29 @@ function EquipmentGrid({ limit }) {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {list.map((e, i) => (
-        <Reveal key={e.key} delay={i * 60}>
+        <Reveal key={e.key} delay={i * 50}>
           <RouteLink
             to={`/services/${e.key}`}
             className="block bg-white h-full overflow-hidden group"
           >
-            <div className="relative h-44 overflow-hidden">
-              <img
-                src={e.image}
-                alt={`${e.name} truck`}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(11,31,51,0) 40%, rgba(11,31,51,0.55) 100%)",
-                }}
-              />
-              <div className="absolute bottom-3 left-4 flex items-center gap-2">
-                <div
-                  className="w-8 h-8 flex items-center justify-center"
-                  style={{ background: COLORS.red }}
-                >
-                  <e.icon size={16} color="#fff" />
-                </div>
+            <EquipmentPanel
+              Icon={e.icon}
+              size={40}
+              className="h-40 group-hover:scale-[1.02] transition-transform duration-200"
+            />
+            <div className="p-6 flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
                 <span
-                  className="text-white text-lg"
+                  className="text-lg"
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
+                    color: COLORS.navy,
                     letterSpacing: "0.02em",
                   }}
                 >
                   {e.name.toUpperCase()}
                 </span>
               </div>
-            </div>
-            <div className="p-6 flex flex-col">
               <p
                 className="text-sm mb-5"
                 style={{ color: "#4B5563", fontFamily: "'Inter', sans-serif" }}
@@ -1070,7 +1376,7 @@ function StepsRow() {
       />
       <div className="grid lg:grid-cols-4 gap-10 lg:gap-6">
         {STEPS.map((s, i) => (
-          <Reveal key={s.n} delay={i * 100}>
+          <Reveal key={s.n} delay={i * 80}>
             <div className="relative flex lg:flex-col gap-5 lg:gap-0">
               <div
                 className="relative z-10 w-12 h-12 flex items-center justify-center flex-shrink-0 text-sm font-bold lg:mb-6"
@@ -1114,11 +1420,12 @@ function Testimonials() {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {TESTIMONIALS.map((t, i) => (
-        <Reveal key={t.name} delay={i * 70}>
+        <Reveal key={t.name} delay={i * 60}>
           <div
             className="p-6 h-full flex flex-col"
-            style={{ background: COLORS.gray }}
+            style={{ background: COLORS.paper }}
           >
+            <Quote size={20} style={{ color: COLORS.red, marginBottom: 10 }} />
             <div className="flex gap-1 mb-4">
               {Array.from({ length: 5 }).map((_, idx) => (
                 <Star
@@ -1163,10 +1470,11 @@ function FAQAccordion({ items }) {
   return (
     <div className="flex flex-col">
       {items.map((f, i) => (
-        <Reveal key={f.q} delay={i * 30}>
-          <div style={{ borderBottom: "1px solid #E5E7EB" }}>
+        <div key={f.q} style={{ borderBottom: "1px solid #E5E7EB" }}>
+          <h3 className="m-0">
             <button
               onClick={() => setOpen(open === i ? -1 : i)}
+              aria-expanded={open === i}
               className="w-full flex items-center justify-between gap-4 py-5 text-left"
             >
               <span
@@ -1188,22 +1496,22 @@ function FAQAccordion({ items }) {
                 }}
               />
             </button>
-            <div
-              style={{
-                maxHeight: open === i ? 200 : 0,
-                overflow: "hidden",
-                transition: "max-height 0.3s ease",
-              }}
+          </h3>
+          <div
+            style={{
+              maxHeight: open === i ? 200 : 0,
+              overflow: "hidden",
+              transition: "max-height 0.3s ease",
+            }}
+          >
+            <p
+              className="text-sm pb-5 pr-8"
+              style={{ color: "#4B5563", fontFamily: "'Inter', sans-serif" }}
             >
-              <p
-                className="text-sm pb-5 pr-8"
-                style={{ color: "#4B5563", fontFamily: "'Inter', sans-serif" }}
-              >
-                {f.a}
-              </p>
-            </div>
+              {f.a}
+            </p>
           </div>
-        </Reveal>
+        </div>
       ))}
     </div>
   );
@@ -1213,19 +1521,22 @@ function SiteSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const items = [
-    { label: "Home", to: "/" },
-    { label: "Services", to: "/services" },
-    { label: "How It Works", to: "/how-it-works" },
-    { label: "About", to: "/about" },
-    { label: "Coverage", to: "/coverage" },
-    { label: "FAQ", to: "/faq" },
-    { label: "Contact", to: "/contact" },
-    ...EQUIPMENT.map((e) => ({
-      label: `${e.name} Dispatching`,
-      to: `/services/${e.key}`,
-    })),
-  ];
+  const items = useMemo(
+    () => [
+      { label: "Home", to: "/" },
+      { label: "Services", to: "/services" },
+      { label: "How It Works", to: "/how-it-works" },
+      { label: "About", to: "/about" },
+      { label: "Coverage", to: "/coverage" },
+      { label: "FAQ", to: "/faq" },
+      { label: "Contact", to: "/contact" },
+      ...EQUIPMENT.map((e) => ({
+        label: `${e.name} Dispatching`,
+        to: `/services/${e.key}`,
+      })),
+    ],
+    [],
+  );
 
   const results = query.trim()
     ? items.filter((item) =>
@@ -1239,6 +1550,7 @@ function SiteSearch() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Search the website"
+        aria-expanded={open}
         className="flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
         style={{ borderColor: "rgba(255,255,255,0.2)", color: COLORS.white }}
       >
@@ -1254,10 +1566,10 @@ function SiteSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search the site..."
+            autoFocus
             className="w-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none"
             style={{ fontFamily: "'Inter', sans-serif" }}
           />
-
           <div className="mt-3 max-h-64 overflow-y-auto">
             {!query.trim() && (
               <p
@@ -1301,19 +1613,16 @@ function SiteSearch() {
 
 function ScrollProgress() {
   const [progress, setProgress] = useState(0);
-
   useEffect(() => {
     const onScroll = () => {
       const total = document.documentElement.scrollHeight - window.innerHeight;
       const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
       setProgress(Math.min(100, Math.max(0, pct)));
     };
-
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
   return (
     <div
       className="fixed left-0 top-0 z-[80] h-1 w-full bg-transparent"
@@ -1333,23 +1642,20 @@ function ScrollProgress() {
 
 function TopButton() {
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 500);
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
   if (!visible) return null;
-
   return (
     <button
       type="button"
       aria-label="Scroll back to top"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="top-button fixed bottom-24 right-5 z-[75] flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105"
-      style={{ background: COLORS.red, color: COLORS.white }}
+      className="fixed z-[75] flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105 bottom-44 right-5 md:bottom-8 md:right-28"
+      style={{ background: COLORS.charcoal, color: COLORS.white }}
     >
       <ArrowUp size={20} />
     </button>
@@ -1358,23 +1664,22 @@ function TopButton() {
 
 function CookieBanner() {
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const consent = window.localStorage.getItem("cookieConsent");
     setVisible(!consent);
   }, []);
-
   if (!visible) return null;
-
   const accept = () => {
     window.localStorage.setItem("cookieConsent", "true");
     setVisible(false);
   };
-
   return (
-    <div className="cookie-banner fixed bottom-4 left-4 right-4 z-[90] rounded-xl border border-slate-200 bg-white p-4 shadow-2xl md:left-auto md:right-6 md:w-[420px]">
+    <div className="fixed bottom-4 left-4 right-4 z-[90] rounded-xl border border-slate-200 bg-white p-4 shadow-2xl md:left-auto md:right-6 md:w-[420px]">
       <div className="flex items-start gap-3">
-        <div className="mt-1 text-2xl">🍪</div>
+        <Cookie
+          size={22}
+          style={{ color: COLORS.red, marginTop: 2, flexShrink: 0 }}
+        />
         <div className="flex-1">
           <p
             className="text-sm font-bold"
@@ -1418,8 +1723,8 @@ function FloatingContactButton() {
     <button
       type="button"
       onClick={() => navigate("/contact")}
-      aria-label="Contact us"
-      className="floating-contact fixed bottom-24 right-5 z-[70] flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-transform hover:scale-105 md:bottom-8"
+      aria-label="Get a dispatch consultation"
+      className="fixed z-[70] flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-transform hover:scale-105 bottom-24 right-5 md:bottom-8 md:right-8"
       style={{ background: COLORS.red, color: COLORS.white }}
     >
       <Phone size={20} />
@@ -1429,7 +1734,6 @@ function FloatingContactButton() {
 
 function CopyTextButton({ text }) {
   const [copied, setCopied] = useState(false);
-
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(text);
@@ -1439,31 +1743,65 @@ function CopyTextButton({ text }) {
       console.error("Copy failed", error);
     }
   };
-
   return (
     <button
       type="button"
       onClick={copy}
       className="ml-2 inline-flex items-center justify-center"
       aria-label={`Copy ${text}`}
-      style={{ color: copied ? COLORS.red : "#9CA6B2" }}
+      style={{ color: copied ? COLORS.amber : "#9CA6B2" }}
     >
-      <Copy size={13} />
+      {copied ? <Check size={13} /> : <Copy size={13} />}
     </button>
   );
 }
 
 function TeamWarehouseSection() {
+  const items = [
+    { icon: Headphones, text: "A dedicated point of contact for your truck" },
+    {
+      icon: MessageSquare,
+      text: "Direct communication, no call centers or scripts",
+    },
+    { icon: FileText, text: "Paperwork tracked from pickup to POD" },
+  ];
   return (
     <section className="py-20 md:py-28" style={{ background: COLORS.white }}>
       <div className="max-w-7xl mx-auto px-5 md:px-8 grid lg:grid-cols-2 gap-12 items-center">
         <Reveal>
-          <div className="relative h-72 md:h-96 overflow-hidden">
-            <img
-              src={IMAGES.warehouse}
-              alt="Warehouse team working"
-              className="w-full h-full object-cover"
-            />
+          <div
+            className="relative h-72 md:h-96 overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.navy} 0%, ${COLORS.steel} 100%)`,
+            }}
+          >
+            <svg
+              className="absolute inset-0 w-full h-full opacity-25"
+              aria-hidden="true"
+            >
+              <pattern
+                id="dots2"
+                width="24"
+                height="24"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="2" cy="2" r="1.4" fill={COLORS.white} />
+              </pattern>
+              <rect width="100%" height="100%" fill="url(#dots2)" />
+            </svg>
+            <div className="relative h-full flex flex-col items-center justify-center gap-4 p-8">
+              <Headphones size={56} color={COLORS.white} strokeWidth={1.2} />
+              <span
+                className="text-2xl text-center"
+                style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  color: COLORS.white,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                THE DISPATCH DESK
+              </span>
+            </div>
           </div>
         </Reveal>
         <Reveal delay={100}>
@@ -1480,13 +1818,9 @@ function TeamWarehouseSection() {
             algorithm that disappears once you're loaded.
           </p>
           <div className="flex flex-col gap-3">
-            {[
-              "A dedicated point of contact for your truck",
-              "Direct communication, no call centers or scripts",
-              "Paperwork tracked from pickup to POD",
-            ].map((t) => (
-              <div key={t} className="flex items-center gap-3">
-                <CheckCircle2
+            {items.map((t) => (
+              <div key={t.text} className="flex items-center gap-3">
+                <t.icon
                   size={18}
                   style={{ color: COLORS.red, flexShrink: 0 }}
                 />
@@ -1497,7 +1831,7 @@ function TeamWarehouseSection() {
                     fontFamily: "'Inter', sans-serif",
                   }}
                 >
-                  {t}
+                  {t.text}
                 </span>
               </div>
             ))}
@@ -1510,20 +1844,10 @@ function TeamWarehouseSection() {
 function FinalCTA() {
   return (
     <section
-      className="relative py-24 md:py-32"
+      className="relative py-24 md:py-32 overflow-hidden"
       style={{ background: COLORS.charcoal }}
     >
-      <div className="absolute inset-0">
-        <img
-          src={IMAGES.hero}
-          alt="Semi-truck fleet at dusk"
-          className="w-full h-full object-cover"
-        />
-        <div
-          className="absolute inset-0"
-          style={{ background: "rgba(11,31,51,0.9)" }}
-        />
-      </div>
+      <RouteBackdrop variant="page" />
       <div className="relative max-w-3xl mx-auto px-5 md:px-8 text-center">
         <Reveal>
           <h2
@@ -1562,23 +1886,10 @@ function HomePage() {
   return (
     <>
       <section
-        className="relative flex items-center"
+        className="relative flex items-center overflow-hidden"
         style={{ minHeight: "92vh", background: COLORS.navy }}
       >
-        <div className="absolute inset-0">
-          <img
-            src={IMAGES.hero}
-            alt="Semi-truck driving on a highway at sunset"
-            className="w-full h-full object-cover"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(100deg, rgba(11,31,51,0.96) 20%, rgba(11,31,51,0.75) 55%, rgba(11,31,51,0.55) 100%)",
-            }}
-          />
-        </div>
+        <RouteBackdrop variant="hero" />
         <div className="relative max-w-7xl mx-auto px-5 md:px-8 pt-28 pb-16 md:py-32 w-full">
           <div className="max-w-2xl">
             <Reveal>
@@ -1645,22 +1956,17 @@ function HomePage() {
         </div>
       </section>
 
+      <LaneSnapshot />
       <TrustBar />
 
-      <section className="py-20 md:py-28" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-28" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <div className="max-w-2xl mb-14">
               <Eyebrow>The Problem</Eyebrow>
-              <h2
-                className="text-4xl md:text-5xl leading-[1.05] mb-4"
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: COLORS.navy,
-                }}
-              >
+              <Headline size="text-4xl md:text-5xl" className="leading-[1.05]">
                 STOP WASTING HOURS SEARCHING FOR LOADS.
-              </h2>
+              </Headline>
               <p
                 className="text-base"
                 style={{ color: "#4B5563", fontFamily: "'Inter', sans-serif" }}
@@ -1672,7 +1978,7 @@ function HomePage() {
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14">
             {PROBLEMS.map((p, i) => (
-              <Reveal key={p.text} delay={i * 60}>
+              <Reveal key={p.text} delay={i * 50}>
                 <div
                   className="flex items-start gap-4 p-6 bg-white h-full"
                   style={{ borderLeft: `3px solid ${COLORS.red}` }}
@@ -1715,15 +2021,12 @@ function HomePage() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
               <div className="max-w-xl">
                 <Eyebrow>What We Do</Eyebrow>
-                <h2
-                  className="text-4xl md:text-5xl leading-[1.05]"
-                  style={{
-                    fontFamily: "'Bebas Neue', sans-serif",
-                    color: COLORS.navy,
-                  }}
+                <Headline
+                  size="text-4xl md:text-5xl"
+                  className="leading-[1.05] mb-0"
                 >
                   FULL-SERVICE TRUCK DISPATCHING
-                </h2>
+                </Headline>
               </div>
               <RouteLink
                 to="/how-it-works"
@@ -1738,21 +2041,18 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-28" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
               <div className="max-w-xl">
                 <Eyebrow>Equipment We Dispatch</Eyebrow>
-                <h2
-                  className="text-4xl md:text-5xl leading-[1.05]"
-                  style={{
-                    fontFamily: "'Bebas Neue', sans-serif",
-                    color: COLORS.navy,
-                  }}
+                <Headline
+                  size="text-4xl md:text-5xl"
+                  className="leading-[1.05] mb-0"
                 >
-                  SIX TRAILER TYPES. ONE DISPATCH TEAM.
-                </h2>
+                  SEVEN TRAILER TYPES. ONE DISPATCH TEAM.
+                </Headline>
               </div>
               <RouteLink
                 to="/services"
@@ -1769,20 +2069,17 @@ function HomePage() {
 
       <TeamWarehouseSection />
 
-      <section className="py-20 md:py-28" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-28" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <div className="max-w-2xl mb-16">
               <Eyebrow>The Process</Eyebrow>
-              <h2
-                className="text-4xl md:text-5xl leading-[1.05]"
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: COLORS.navy,
-                }}
+              <Headline
+                size="text-4xl md:text-5xl"
+                className="leading-[1.05] mb-0"
               >
                 HOW IT WORKS
-              </h2>
+              </Headline>
             </div>
           </Reveal>
           <StepsRow />
@@ -1794,23 +2091,20 @@ function HomePage() {
           <Reveal>
             <div className="max-w-2xl mb-14">
               <Eyebrow>Why Choose Us</Eyebrow>
-              <h2
-                className="text-4xl md:text-5xl leading-[1.05]"
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: COLORS.navy,
-                }}
+              <Headline
+                size="text-4xl md:text-5xl"
+                className="leading-[1.05] mb-0"
               >
                 BUILT AROUND YOUR TRUCKING BUSINESS
-              </h2>
+              </Headline>
             </div>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {WHY_US.map((w, i) => (
-              <Reveal key={w.text} delay={i * 60}>
+              <Reveal key={w.text} delay={i * 50}>
                 <div
                   className="flex items-center gap-4 p-6"
-                  style={{ background: COLORS.gray }}
+                  style={{ background: COLORS.paper }}
                 >
                   <w.icon
                     size={24}
@@ -1869,15 +2163,12 @@ function HomePage() {
           <Reveal>
             <div className="max-w-2xl mb-14">
               <Eyebrow>Sample Content</Eyebrow>
-              <h2
-                className="text-4xl md:text-5xl leading-[1.05] mb-3"
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: COLORS.navy,
-                }}
+              <Headline
+                size="text-4xl md:text-5xl"
+                className="leading-[1.05] mb-3"
               >
                 WHAT CARRIERS SAY
-              </h2>
+              </Headline>
               <p
                 className="text-sm"
                 style={{ color: "#6B7280", fontFamily: "'Inter', sans-serif" }}
@@ -1891,22 +2182,19 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-28" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <div className="max-w-2xl mb-14 mx-auto text-center">
               <Eyebrow>
                 <span className="mx-auto">Pricing</span>
               </Eyebrow>
-              <h2
-                className="text-4xl md:text-5xl leading-[1.05]"
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: COLORS.navy,
-                }}
+              <Headline
+                size="text-4xl md:text-5xl"
+                className="leading-[1.05] mb-0"
               >
                 SIMPLE, TRANSPARENT DISPATCHING
-              </h2>
+              </Headline>
             </div>
           </Reveal>
           <Reveal>
@@ -1915,7 +2203,7 @@ function HomePage() {
               style={{ borderTop: `4px solid ${COLORS.red}` }}
             >
               <div
-                className="text-sm font-bold tracking-widest mb-2"
+                className="text-sm font-bold mb-2"
                 style={{ color: "#6B7280", fontFamily: "'Inter', sans-serif" }}
               >
                 DISPATCH SERVICE
@@ -1986,7 +2274,6 @@ function ServicesOverviewPage() {
         eyebrow="Services"
         title="FULL-SERVICE TRUCK DISPATCHING"
         subtitle="Everything between finding a load and getting paid for it — handled by a dispatcher who knows your equipment."
-        image={IMAGES.hero}
       />
       <section className="py-20 md:py-24" style={{ background: COLORS.white }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
@@ -1999,7 +2286,6 @@ function ServicesOverviewPage() {
           <div className="mb-16 mt-6">
             <ServicesGrid />
           </div>
-
           <Reveal>
             <div className="max-w-2xl mb-10">
               <Eyebrow>Equipment</Eyebrow>
@@ -2030,26 +2316,24 @@ function ServiceDetailPage({ eqKey }) {
   const eq = EQUIPMENT.find((e) => e.key === eqKey) || EQUIPMENT[0];
   const others = EQUIPMENT.filter((e) => e.key !== eq.key).slice(0, 3);
 
+  useEffect(() => {
+    setJSONLD("ld-service", {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      serviceType: `${eq.name} Truck Dispatching`,
+      provider: { "@type": "LocalBusiness", name: CONFIG.companyName },
+      areaServed: "United States",
+      description: eq.desc,
+    });
+  }, [eq]);
+
   return (
     <>
       <section
-        className="relative pt-32 pb-20 md:pt-40 md:pb-24"
+        className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden"
         style={{ background: COLORS.navy }}
       >
-        <div className="absolute inset-0">
-          <img
-            src={eq.image}
-            alt={`${eq.name} truck`}
-            className="w-full h-full object-cover"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(100deg, rgba(11,31,51,0.94) 30%, rgba(11,31,51,0.68) 100%)",
-            }}
-          />
-        </div>
+        <RouteBackdrop variant="page" />
         <div className="relative max-w-7xl mx-auto px-5 md:px-8">
           <Breadcrumb
             items={[
@@ -2067,7 +2351,12 @@ function ServiceDetailPage({ eqKey }) {
             </div>
             <Eyebrow>Dispatch Service</Eyebrow>
           </div>
-          <Headline dark size="text-4xl md:text-6xl" className="max-w-3xl">
+          <Headline
+            as="h1"
+            dark
+            size="text-4xl md:text-6xl"
+            className="max-w-3xl"
+          >
             {eq.name.toUpperCase()} DISPATCHING
           </Headline>
           <p
@@ -2116,14 +2405,8 @@ function ServiceDetailPage({ eqKey }) {
           </Reveal>
           <Reveal delay={100}>
             <div className="overflow-hidden">
-              <div className="h-56 overflow-hidden mb-1">
-                <img
-                  src={eq.image}
-                  alt={`${eq.name} on the road`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-8" style={{ background: COLORS.gray }}>
+              <EquipmentPanel Icon={eq.icon} size={52} className="h-52" />
+              <div className="p-8" style={{ background: COLORS.paper }}>
                 <Eyebrow>Typical Freight</Eyebrow>
                 <h3
                   className="text-2xl mb-5"
@@ -2154,7 +2437,7 @@ function ServiceDetailPage({ eqKey }) {
         </div>
       </section>
 
-      <section className="py-20 md:py-24" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-24" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <Headline size="text-3xl md:text-4xl">
@@ -2177,18 +2460,12 @@ function ServiceDetailPage({ eqKey }) {
           </Reveal>
           <div className="grid sm:grid-cols-3 gap-6">
             {others.map((o, i) => (
-              <Reveal key={o.key} delay={i * 70}>
+              <Reveal key={o.key} delay={i * 60}>
                 <RouteLink
                   to={`/services/${o.key}`}
                   className="block bg-white overflow-hidden"
                 >
-                  <div className="h-32 overflow-hidden">
-                    <img
-                      src={o.image}
-                      alt={`${o.name} truck`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <EquipmentPanel Icon={o.icon} size={28} className="h-28" />
                   <div
                     className="p-5"
                     style={{ borderLeft: `3px solid ${COLORS.red}` }}
@@ -2234,7 +2511,6 @@ function HowItWorksPage() {
         eyebrow="Process"
         title="FROM YOUR FIRST CALL TO YOUR NEXT LOAD"
         subtitle="A straightforward onboarding, then a dispatcher who works your lanes every single day."
-        image={IMAGES.warehouse}
       />
       <section className="py-20 md:py-24" style={{ background: COLORS.white }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
@@ -2244,7 +2520,7 @@ function HowItWorksPage() {
           <StepsRow />
         </div>
       </section>
-      <section className="py-20 md:py-24" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-24" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <div className="max-w-2xl mb-14">
@@ -2272,7 +2548,6 @@ function AboutPage() {
         eyebrow="About Us"
         title="DISPATCHERS WHO ACTUALLY WORK YOUR FREIGHT"
         subtitle={`${CONFIG.companyName} was built around one idea: your truck makes money when it's loaded and moving, not when someone is waiting for freight to fall into their lap.`}
-        image={IMAGES.warehouse}
       />
       <section className="py-20 md:py-24" style={{ background: COLORS.white }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
@@ -2281,8 +2556,11 @@ function AboutPage() {
           />
           <div className="grid lg:grid-cols-3 gap-6 mb-20">
             {VALUES.map((v, i) => (
-              <Reveal key={v.title} delay={i * 80}>
-                <div className="p-8 h-full" style={{ background: COLORS.gray }}>
+              <Reveal key={v.title} delay={i * 70}>
+                <div
+                  className="p-8 h-full"
+                  style={{ background: COLORS.paper }}
+                >
                   <v.icon
                     size={26}
                     style={{ color: COLORS.red, marginBottom: 16 }}
@@ -2315,7 +2593,7 @@ function AboutPage() {
 
       <TeamWarehouseSection />
 
-      <section className="py-20 md:py-24" style={{ background: COLORS.gray }}>
+      <section className="py-20 md:py-24" style={{ background: COLORS.paper }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <Reveal>
             <div className="max-w-2xl mb-10">
@@ -2327,7 +2605,7 @@ function AboutPage() {
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {WHY_US.map((w, i) => (
-              <Reveal key={w.text} delay={i * 60}>
+              <Reveal key={w.text} delay={i * 50}>
                 <div className="flex items-center gap-4 p-6 bg-white">
                   <w.icon
                     size={24}
@@ -2375,7 +2653,6 @@ function CoveragePage() {
         eyebrow="Coverage"
         title="NATIONWIDE COVERAGE. FULL U.S. REACH."
         subtitle={`Freight coverage across all ${CONFIG.statesCovered} contiguous states, with dispatchers who know regional lane patterns as well as coast-to-coast runs.`}
-        image={IMAGES.hero}
       />
       <section className="py-20 md:py-24" style={{ background: COLORS.white }}>
         <div className="max-w-7xl mx-auto px-5 md:px-8">
@@ -2401,7 +2678,7 @@ function CoveragePage() {
           </Reveal>
           <div className="grid sm:grid-cols-3 gap-6">
             <Reveal>
-              <div className="p-6" style={{ background: COLORS.gray }}>
+              <div className="p-6" style={{ background: COLORS.paper }}>
                 <Globe
                   size={24}
                   style={{ color: COLORS.red, marginBottom: 12 }}
@@ -2428,7 +2705,7 @@ function CoveragePage() {
               </div>
             </Reveal>
             <Reveal delay={60}>
-              <div className="p-6" style={{ background: COLORS.gray }}>
+              <div className="p-6" style={{ background: COLORS.paper }}>
                 <MapPin
                   size={24}
                   style={{ color: COLORS.red, marginBottom: 12 }}
@@ -2455,7 +2732,7 @@ function CoveragePage() {
               </div>
             </Reveal>
             <Reveal delay={120}>
-              <div className="p-6" style={{ background: COLORS.gray }}>
+              <div className="p-6" style={{ background: COLORS.paper }}>
                 <Route
                   size={24}
                   style={{ color: COLORS.red, marginBottom: 12 }}
@@ -2493,6 +2770,17 @@ function CoveragePage() {
    PAGE: FAQ
    ============================================================ */
 function FAQPage() {
+  useEffect(() => {
+    setJSONLD("ld-faq", {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    });
+  }, []);
   return (
     <>
       <PageHero
@@ -2544,6 +2832,7 @@ function Field({
         onChange={handleChange(k)}
         placeholder={placeholder}
         className={fieldClass}
+        aria-invalid={!!errors[k]}
         style={{
           borderColor: errors[k] ? colors.red : "#D1D5DB",
           fontFamily: "'Inter', sans-serif",
@@ -2570,7 +2859,6 @@ function ContactPage() {
     fullName: "",
     phone: "",
     email: "",
-    password: "",
     companyName: "",
     truckType: "",
     numTrucks: "",
@@ -2584,12 +2872,10 @@ function ContactPage() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const required = [
     "fullName",
     "phone",
     "email",
-    "password",
     "truckType",
     "numTrucks",
     "mcNumber",
@@ -2609,8 +2895,6 @@ function ContactPage() {
       errs.email = "Enter a valid email address.";
     if (form.phone && !/^[\d\s()+-]{7,}$/.test(form.phone))
       errs.phone = "Enter a valid phone number.";
-    if (form.password && form.password.length < 6)
-      errs.password = "Password must be at least 6 characters.";
     return errs;
   };
 
@@ -2634,7 +2918,6 @@ function ContactPage() {
         eyebrow="Get Started"
         title="LET'S GET YOUR TRUCK MOVING"
         subtitle="Tell us about your truck and lanes — a dispatcher will follow up the same business day."
-        image={IMAGES.hero}
       />
       <section className="py-20 md:py-24" style={{ background: COLORS.white }}>
         <div className="max-w-4xl mx-auto px-5 md:px-8">
@@ -2643,7 +2926,11 @@ function ContactPage() {
           />
 
           <div className="grid sm:grid-cols-3 gap-4 mb-12">
-            <div className="p-5" style={{ background: COLORS.gray }}>
+            <a
+              href={`tel:${CONFIG.phoneRaw}`}
+              className="p-5 block"
+              style={{ background: COLORS.paper }}
+            >
               <Phone size={18} style={{ color: COLORS.red, marginBottom: 8 }} />
               <div
                 className="text-sm font-bold"
@@ -2654,8 +2941,12 @@ function ContactPage() {
               >
                 {CONFIG.phone}
               </div>
-            </div>
-            <div className="p-5" style={{ background: COLORS.gray }}>
+            </a>
+            <a
+              href={`mailto:${CONFIG.email}`}
+              className="p-5 block"
+              style={{ background: COLORS.paper }}
+            >
               <Mail size={18} style={{ color: COLORS.red, marginBottom: 8 }} />
               <div
                 className="text-sm font-bold"
@@ -2666,8 +2957,8 @@ function ContactPage() {
               >
                 {CONFIG.email}
               </div>
-            </div>
-            <div className="p-5" style={{ background: COLORS.gray }}>
+            </a>
+            <div className="p-5" style={{ background: COLORS.paper }}>
               <MapPin
                 size={18}
                 style={{ color: COLORS.red, marginBottom: 8 }}
@@ -2687,7 +2978,8 @@ function ContactPage() {
           {submitted ? (
             <div
               className="p-12 text-center"
-              style={{ background: COLORS.gray }}
+              style={{ background: COLORS.paper }}
+              role="status"
             >
               <CheckCircle2
                 size={44}
@@ -2715,7 +3007,7 @@ function ContactPage() {
             <form
               onSubmit={handleSubmit}
               className="p-6 md:p-10 grid sm:grid-cols-2 gap-5"
-              style={{ background: COLORS.gray }}
+              style={{ background: COLORS.paper }}
               noValidate
             >
               <Field
@@ -2740,54 +3032,6 @@ function ContactPage() {
                 half
                 {...fieldProps}
               />
-              <div className="sm:col-span-2">
-                <label
-                  className="block text-xs font-bold mb-2"
-                  style={{
-                    color: COLORS.navy,
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                >
-                  Password <span style={{ color: COLORS.red }}>*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={form.password}
-                    onChange={handleChange("password")}
-                    placeholder="Enter a secure password"
-                    className={fieldClass}
-                    style={{
-                      borderColor: errors.password ? COLORS.red : "#D1D5DB",
-                      fontFamily: "'Inter', sans-serif",
-                      color: COLORS.navy,
-                      paddingRight: 46,
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                    style={{ color: COLORS.navy }}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p
-                    className="text-xs mt-1 font-semibold"
-                    style={{
-                      color: COLORS.red,
-                      fontFamily: "'Inter', sans-serif",
-                    }}
-                  >
-                    {errors.password}
-                  </p>
-                )}
-              </div>
               <Field
                 label="Company Name"
                 k="companyName"
@@ -2861,9 +3105,15 @@ function ContactPage() {
           )}
 
           {confirmOpen && (
-            <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4">
+            <div
+              className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="confirm-title"
+            >
               <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
                 <h3
+                  id="confirm-title"
                   className="text-2xl mb-3"
                   style={{
                     fontFamily: "'Bebas Neue', sans-serif",
@@ -2933,17 +3183,30 @@ function Footer() {
             className="text-sm mb-5"
             style={{ color: "#9CA6B2", fontFamily: "'Inter', sans-serif" }}
           >
-            Professional Truck Dispatching &amp; Freight Management
+            {CONFIG.tagline}
           </p>
           <div className="flex gap-3">
             {[
-              { Icon: Facebook, href: CONFIG.social.facebook },
-              { Icon: Instagram, href: CONFIG.social.instagram },
-              { Icon: Linkedin, href: CONFIG.social.linkedin },
-            ].map(({ Icon, href }, i) => (
+              {
+                Icon: Facebook,
+                href: CONFIG.social.facebook,
+                label: "Facebook",
+              },
+              {
+                Icon: Instagram,
+                href: CONFIG.social.instagram,
+                label: "Instagram",
+              },
+              {
+                Icon: Linkedin,
+                href: CONFIG.social.linkedin,
+                label: "LinkedIn",
+              },
+            ].map(({ Icon, href, label }, i) => (
               <a
                 key={i}
                 href={href}
+                aria-label={label}
                 className="w-9 h-9 flex items-center justify-center"
                 style={{ background: "rgba(255,255,255,0.08)" }}
               >
@@ -2953,12 +3216,12 @@ function Footer() {
           </div>
         </div>
         <div>
-          <h4
-            className="text-sm font-bold mb-4 tracking-wide"
+          <h2
+            className="text-sm font-bold mb-4"
             style={{ color: COLORS.white, fontFamily: "'Inter', sans-serif" }}
           >
             COMPANY
-          </h4>
+          </h2>
           <ul className="flex flex-col gap-2">
             {[
               ["Home", "/"],
@@ -2984,12 +3247,12 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <h4
-            className="text-sm font-bold mb-4 tracking-wide"
+          <h2
+            className="text-sm font-bold mb-4"
             style={{ color: COLORS.white, fontFamily: "'Inter', sans-serif" }}
           >
             SERVICES
-          </h4>
+          </h2>
           <ul className="flex flex-col gap-2">
             {EQUIPMENT.map((e) => (
               <li key={e.key}>
@@ -3008,12 +3271,12 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <h4
-            className="text-sm font-bold mb-4 tracking-wide"
+          <h2
+            className="text-sm font-bold mb-4"
             style={{ color: COLORS.white, fontFamily: "'Inter', sans-serif" }}
           >
             CONTACT
-          </h4>
+          </h2>
           <ul className="flex flex-col gap-3">
             <li
               className="flex items-start gap-2 text-sm"
@@ -3047,15 +3310,10 @@ function Footer() {
             className="text-xs"
             style={{ color: "#7C8896", fontFamily: "'Inter', sans-serif" }}
           >
-            © 2026 {CONFIG.companyName}. All Rights Reserved.
+            © {new Date().getFullYear()} {CONFIG.companyName}. All Rights
+            Reserved.
           </p>
           <div className="flex items-center gap-5 flex-wrap">
-            <span
-              className="text-xs"
-              style={{ color: "#7C8896", fontFamily: "'Inter', sans-serif" }}
-            >
-              Last updated: Sep 20, 2026
-            </span>
             <a
               href="#"
               className="text-xs"
@@ -3097,7 +3355,7 @@ function PageSwitch({ route }) {
 
 export default function App() {
   const route = useRoute();
-  const [loading, setLoading] = useState(true);
+  useSEO(route);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -3106,16 +3364,8 @@ export default function App() {
         key.toLowerCase().startsWith("utm_"),
       ),
     );
-
-    if (Object.keys(utm).length > 0) {
+    if (Object.keys(utm).length > 0)
       sessionStorage.setItem("utmParams", JSON.stringify(utm));
-    }
-  }, [route]);
-
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 300);
-    return () => clearTimeout(timer);
   }, [route]);
 
   return (
@@ -3126,6 +3376,13 @@ export default function App() {
         @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
         a, button { cursor: pointer; }
         input:focus { outline: 2px solid #E63946; outline-offset: 1px; }
+        a:focus-visible, button:focus-visible { outline: 2px solid #E63946; outline-offset: 2px; }
+        .skip-link {
+          position: absolute; left: -9999px; top: 0; z-index: 100;
+          background: #fff; color: #0B1D33; padding: 10px 16px;
+          font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px;
+        }
+        .skip-link:focus { left: 12px; top: 12px; }
       `}</style>
       <a href="#main-content" className="skip-link">
         Skip to content
@@ -3133,11 +3390,6 @@ export default function App() {
       <ScrollProgress />
       <Navbar route={route} />
       <main id="main-content">
-        {loading && (
-          <div className="page-loader">
-            <span>Loading...</span>
-          </div>
-        )}
         <PageSwitch route={route} />
       </main>
       <Footer />
