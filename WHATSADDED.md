@@ -11,6 +11,8 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 - Dependency manager: npm
 - Build status: verified successfully with `npm run build`
 - Source files present: `src/App.jsx`, `src/index.css`, `src/main.jsx`
+- Email delivery: EmailJS connected through the contact form
+- Production domain: `https://www.keephauling.com/`
 - Supporting config present: `vite.config.js`, `tailwind.config.js`, `postcss.config.js`, `package.json`
 - Repo hygiene: [.gitignore](.gitignore) and [README.md](README.md) are present
 
@@ -41,15 +43,18 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 - Added last-updated footer info
 - Added expandable FAQ behavior
 - Added floating contact button
+- Added truck image asset at `src/assets/truck.jpg`
+- Replaced generated image placeholders with the reusable truck asset in `src/App.jsx`
+- Added canonical production-domain SEO metadata and structured data
+- Added Open Graph, Twitter, Googlebot, and theme-color metadata
+- Added EmailJS submission handling with validation, confirmation, loading, and error states
+- Added responsive EmailJS email markup in [emailjs-template.html](emailjs-template.html)
 
 ## Still needed for production polish
 
 - Real business branding, logo, and brand colors review
 - Real client testimonials and case studies
-- Real images and assets instead of stock placeholders
-- Better SEO metadata and social tags
 - Deployment configuration for hosting
-- Form backend integration or email service
 - Analytics and conversion tracking
 - Performance tuning and asset optimization
 - Additional accessibility refinements
@@ -57,4 +62,4 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 
 ## Notes
 
-This file reflects the current audit of the repo and intentionally avoids changing the app copy or source logic in [src/App.jsx](src/App.jsx). The goal is to track progress without altering the actual website content layer.
+This file reflects the current audit of the repo. The active app is [src/App.jsx](src/App.jsx); [src/App copy.jsx](src/App%20copy.jsx) remains unchanged as a reference copy.
