@@ -1,45 +1,60 @@
-# Whats Added
+# Project Audit
 
-## Completed
+## Summary
 
-- Added a project-level [.gitignore](.gitignore) to ignore dependencies, build files, logs, environment files, and editor settings.
-- Added a basic [README.md](README.md) with project description, setup steps, and build instructions.
-- Built a full Vite + React + Tailwind landing page for the trucking dispatch business.
-- Added a hero section, service overview, equipment pages, about, FAQ, coverage, and contact flow.
-- Added mobile navigation and responsive layout improvements.
-- Added a simple cookie/privacy banner.
-- Added site search.
-- Added a top-button scroll helper.
-- Added loading animations and hover states.
-- Added scroll progress bar.
-- Added copy-to-clipboard buttons for contact info.
-- Added print stylesheet optimizations.
-- Added sticky header behavior.
-- Added skip-to-content accessibility link.
-- Added password visibility toggle on the contact form.
-- Added UTM tracking support in the app state.
-- Added form success and error states.
-- Added confirmation modal before submission.
-- Added last updated date in the footer.
-- Added expandable FAQ sections.
-- Added floating contact button.
-- Added contact form styling and validation.
+This repository is a Vite + React + Tailwind website project for a trucking dispatch business. It includes a responsive landing page, multiple content sections, a working contact form, and several UX improvements already implemented.
 
-## Planned Additions
+## Verified project state
 
-- Real branding assets and logo updates
-- Real business photos and custom imagery
-- Real testimonials and case studies
-- Blog or news section (optional)
-- SEO metadata refinements and social preview tags
-- Deployment setup for Netlify, Vercel, or GitHub Pages
-- Performance optimization and image compression
-- Additional accessible improvements and keyboard polish
-- Admin/content management setup (optional)
-- Analytics and conversion tracking setup
-- Custom animations beyond the base motion polish
-- More advanced form backend integration
+- Project type: Vite React app
+- Styling: Tailwind CSS
+- Dependency manager: npm
+- Build status: verified successfully with `npm run build`
+- Source files present: `src/App.jsx`, `src/index.css`, `src/main.jsx`
+- Supporting config present: `vite.config.js`, `tailwind.config.js`, `postcss.config.js`, `package.json`
+- Repo hygiene: [.gitignore](.gitignore) and [README.md](README.md) are present
+
+## Completed / existing work
+
+- Added project-level [.gitignore](.gitignore)
+- Added starter [README.md](README.md)
+- Created a multi-page marketing site structure
+- Added homepage hero section and CTA layout
+- Added services overview and equipment detail pages
+- Added about, coverage, FAQ, and contact pages
+- Added responsive mobile navigation
+- Added reveal/scroll animation behaviors
+- Added simple cookie/privacy banner
+- Added site search UI
+- Added scroll-to-top button
+- Added loading state animation
+- Added hover state styling
+- Added scroll progress indicator
+- Added copy buttons for contact info
+- Added print styles
+- Added sticky header behavior
+- Added skip-to-content accessibility link
+- Added password visibility toggle in the contact form
+- Added UTM tracking logic
+- Added validation and form success/error handling
+- Added confirmation modal before form submission
+- Added last-updated footer info
+- Added expandable FAQ behavior
+- Added floating contact button
+
+## Still needed for production polish
+
+- Real business branding, logo, and brand colors review
+- Real client testimonials and case studies
+- Real images and assets instead of stock placeholders
+- Better SEO metadata and social tags
+- Deployment configuration for hosting
+- Form backend integration or email service
+- Analytics and conversion tracking
+- Performance tuning and asset optimization
+- Additional accessibility refinements
+- Content cleanup and final business copy review
 
 ## Notes
 
-This file tracks what has already been implemented and what remains for a more complete production-ready website.
+This file reflects the current audit of the repo and intentionally avoids changing the app copy or source logic in [src/App.jsx](src/App.jsx). The goal is to track progress without altering the actual website content layer.
