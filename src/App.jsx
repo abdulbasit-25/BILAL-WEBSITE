@@ -540,14 +540,11 @@ const SEO_META = {
    ROUTER
    ============================================================ */
 function useRoute() {
-  const [path, setPath] = useState(
-    () => window.location.hash.replace(/^#/, "") || "/",
-  );
+  const [path, setPath] = useState(() => window.location.pathname || "/");
   useEffect(() => {
-    const onChange = () =>
-      setPath(window.location.hash.replace(/^#/, "") || "/");
-    window.addEventListener("hashchange", onChange);
-    return () => window.removeEventListener("hashchange", onChange);
+    const onChange = () => setPath(window.location.pathname || "/");
+    window.addEventListener("popstate", onChange);
+    return () => window.removeEventListener("popstate", onChange);
   }, []);
   useEffect(() => {
     window.scrollTo({
@@ -558,7 +555,9 @@ function useRoute() {
   return path;
 }
 function navigate(path) {
-  window.location.hash = path;
+  if (window.location.pathname === path) return;
+  window.history.pushState({}, "", path);
+  window.dispatchEvent(new PopStateEvent("popstate"));
 }
 
 /* ============================================================
@@ -601,7 +600,7 @@ function useSEO(route) {
     const base = route.split("/").slice(0, 2).join("/") || "/";
     const meta = SEO_META[base] || SEO_META["/"];
     const canonicalUrl =
-      route === "/" ? CONFIG.siteUrl : `${CONFIG.siteUrl}/#${route}`;
+      route === "/" ? `${CONFIG.siteUrl}/` : `${CONFIG.siteUrl}${route}`;
     document.title = meta.title;
     setMeta("description", meta.description);
     setMeta("robots", "index, follow");
@@ -812,6 +811,7 @@ function RouteBackdrop({ variant = "hero" }) {
         src={truckImage}
         alt=""
         className="h-full w-full object-cover"
+        decoding="async"
         style={{ opacity: variant === "hero" ? 0.5 : 0.38 }}
       />
       <div
@@ -836,6 +836,8 @@ function EquipmentPanel({ Icon, size = 40, className = "" }) {
         src={truckImage}
         alt="Truck used for freight dispatching"
         className="absolute inset-0 h-full w-full object-cover"
+        loading="lazy"
+        decoding="async"
         style={{ opacity: 0.62 }}
       />
       <div
@@ -890,7 +892,7 @@ function Breadcrumb({ items }) {
       "@type": "ListItem",
       position: i + 1,
       name: it.label,
-      item: it.to ? `${CONFIG.siteUrl}/#${it.to}` : undefined,
+      item: it.to ? `${CONFIG.siteUrl}${it.to}` : undefined,
     })),
   };
   return (
@@ -1530,6 +1532,7 @@ function SiteSearch() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Search the website"
+        title="Search the website"
         aria-expanded={open}
         className="flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
         style={{ borderColor: "rgba(255,255,255,0.2)", color: COLORS.white }}
@@ -1633,6 +1636,7 @@ function TopButton() {
     <button
       type="button"
       aria-label="Scroll back to top"
+      title="Scroll back to top"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       className="fixed z-[75] flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-105 bottom-44 right-5 md:bottom-8 md:right-28"
       style={{ background: COLORS.charcoal, color: COLORS.white }}
@@ -1704,6 +1708,7 @@ function FloatingContactButton() {
       type="button"
       onClick={() => navigate("/contact")}
       aria-label="Get a dispatch consultation"
+      title="Get a dispatch consultation"
       className="fixed z-[70] flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition-transform hover:scale-105 bottom-24 right-5 md:bottom-8 md:right-8"
       style={{ background: COLORS.red, color: COLORS.white }}
     >
@@ -1729,6 +1734,7 @@ function CopyTextButton({ text }) {
       onClick={copy}
       className="ml-2 inline-flex items-center justify-center"
       aria-label={`Copy ${text}`}
+      title={`Copy ${text}`}
       style={{ color: copied ? COLORS.amber : "#9CA6B2" }}
     >
       {copied ? <Check size={13} /> : <Copy size={13} />}
@@ -3220,17 +3226,19 @@ function Footer() {
                 href: CONFIG.social.linkedin,
                 label: "LinkedIn",
               },
-            ].map(({ Icon, href, label }, i) => (
-              <a
-                key={i}
-                href={href}
-                aria-label={label}
-                className="w-9 h-9 flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.08)" }}
-              >
-                <Icon size={16} color="#fff" />
-              </a>
-            ))}
+            ]
+              .filter(({ href }) => href && href !== "#")
+              .map(({ Icon, href, label }, i) => (
+                <a
+                  key={i}
+                  href={href}
+                  aria-label={label}
+                  className="w-9 h-9 flex items-center justify-center"
+                  style={{ background: "rgba(255,255,255,0.08)" }}
+                >
+                  <Icon size={16} color="#fff" />
+                </a>
+              ))}
           </div>
         </div>
         <div>
@@ -3332,20 +3340,18 @@ function Footer() {
             Reserved.
           </p>
           <div className="flex items-center gap-5 flex-wrap">
-            <a
-              href="#"
+            <span
               className="text-xs"
               style={{ color: "#7C8896", fontFamily: "'Inter', sans-serif" }}
             >
               Privacy Policy
-            </a>
-            <a
-              href="#"
+            </span>
+            <span
               className="text-xs"
               style={{ color: "#7C8896", fontFamily: "'Inter', sans-serif" }}
             >
               Terms &amp; Conditions
-            </a>
+            </span>
           </div>
         </div>
       </div>
