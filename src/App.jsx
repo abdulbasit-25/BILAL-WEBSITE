@@ -611,9 +611,18 @@ function useSEO(route) {
     setMeta("og:site_name", CONFIG.companyName, "property");
     setMeta("og:locale", "en_US", "property");
     setMeta("og:url", canonicalUrl, "property");
+    setMeta("og:image", `${CONFIG.siteUrl}/og-image.jpg`, "property");
+    setMeta(
+      "og:image:alt",
+      "Keep Hauling truck dispatching services",
+      "property",
+    );
+    setMeta("og:image:type", "image/jpeg", "property");
     setMeta("twitter:card", "summary");
     setMeta("twitter:title", meta.title);
     setMeta("twitter:description", meta.description);
+    setMeta("twitter:image", `${CONFIG.siteUrl}/og-image.jpg`);
+    setMeta("twitter:image:alt", "Keep Hauling truck dispatching services");
     setLinkCanonical(canonicalUrl);
 
     setJSONLD("ld-org", {
