@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import truckImage from "./assets/truck.jpg";
 import {
   Menu,
   X,
@@ -58,7 +59,7 @@ const CONFIG = {
   loadsBooked: "500+",
   statesCovered: "48",
   supportHours: "24/7",
-  siteUrl: "https://www.keephauling.example",
+  siteUrl: "https://www.keephauling.com",
   social: { facebook: "#", instagram: "#", linkedin: "#" },
 };
 
@@ -593,19 +594,25 @@ function useSEO(route) {
     document.documentElement.lang = "en";
     const base = route.split("/").slice(0, 2).join("/") || "/";
     const meta = SEO_META[base] || SEO_META["/"];
+    const canonicalUrl =
+      route === "/" ? CONFIG.siteUrl : `${CONFIG.siteUrl}/#${route}`;
     document.title = meta.title;
     setMeta("description", meta.description);
+    setMeta("robots", "index, follow");
     setMeta("og:title", meta.title, "property");
     setMeta("og:description", meta.description, "property");
     setMeta("og:type", "website", "property");
+    setMeta("og:site_name", CONFIG.companyName, "property");
+    setMeta("og:locale", "en_US", "property");
+    setMeta("og:url", canonicalUrl, "property");
     setMeta("twitter:card", "summary");
     setMeta("twitter:title", meta.title);
     setMeta("twitter:description", meta.description);
-    setLinkCanonical(`${CONFIG.siteUrl}/#${route}`);
+    setLinkCanonical(canonicalUrl);
 
     setJSONLD("ld-org", {
       "@context": "https://schema.org",
-      "@type": "LocalBusiness",
+      "@type": ["LocalBusiness", "ProfessionalService"],
       "@id": `${CONFIG.siteUrl}/#business`,
       name: CONFIG.companyName,
       description: SEO_META["/"].description,
@@ -613,13 +620,17 @@ function useSEO(route) {
       email: CONFIG.email,
       address: {
         "@type": "PostalAddress",
-        streetAddress: CONFIG.address,
+        streetAddress: "3500 Adams St, Apt 2S",
         addressLocality: CONFIG.city,
         addressRegion: CONFIG.state,
         postalCode: CONFIG.zip,
         addressCountry: "US",
       },
-      areaServed: "United States",
+      areaServed: {
+        "@type": "Country",
+        name: "United States",
+      },
+      serviceType: "Truck dispatching and freight management",
       url: CONFIG.siteUrl,
       priceRange: "$$",
     });
@@ -778,91 +789,45 @@ function RouteLink({
   );
 }
 
-/* Graphic hero backdrop used in place of stock photography — a dashed
-   route line with waypoint markers, echoing a dispatcher's route map. */
+/* Reusable truck image backdrop for hero and interior page headers. */
 function RouteBackdrop({ variant = "hero" }) {
-  const dim = variant === "hero" ? "0 0 1200 500" : "0 0 1200 320";
   return (
-    <svg
-      viewBox={dim}
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0 w-full h-full"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="rb-fade" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={COLORS.steel} stopOpacity="0.55" />
-          <stop offset="100%" stopColor={COLORS.navy} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {Array.from({ length: 14 }).map((_, r) =>
-        Array.from({ length: 30 }).map((_, c) => (
-          <circle
-            key={`${r}-${c}`}
-            cx={c * 42 + 10}
-            cy={r * 42 + 10}
-            r="1.2"
-            fill="rgba(255,255,255,0.06)"
-          />
-        )),
-      )}
-      <path
-        d="M -20 420 C 250 380, 380 480, 560 340 S 900 120, 1250 160"
-        fill="none"
-        stroke={COLORS.amber}
-        strokeOpacity="0.45"
-        strokeWidth="3"
-        strokeDasharray="2 14"
-        strokeLinecap="round"
+    <div className="absolute inset-0" aria-hidden="true">
+      <img
+        src={truckImage}
+        alt=""
+        className="h-full w-full object-cover"
+        style={{ opacity: variant === "hero" ? 0.5 : 0.38 }}
       />
-      <circle cx="560" cy="340" r="6" fill={COLORS.red} />
-      <circle
-        cx="560"
-        cy="340"
-        r="12"
-        fill="none"
-        stroke={COLORS.red}
-        strokeOpacity="0.4"
-        strokeWidth="2"
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(6,18,32,0.96) 0%, rgba(11,29,51,0.72) 52%, rgba(11,29,51,0.34) 100%)",
+        }}
       />
-      <circle cx="1120" cy="150" r="6" fill={COLORS.amber} />
-      <rect x="0" y="0" width="1200" height="500" fill="url(#rb-fade)" />
-    </svg>
+    </div>
   );
 }
 
-/* Icon-forward panel used in place of a stock trailer photo — a
-   consistent, load-board-inspired treatment for each equipment type. */
+/* Truck image panel used for equipment cards until dedicated photos are added. */
 function EquipmentPanel({ Icon, size = 40, className = "" }) {
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${className}`}
-      style={{
-        background: `linear-gradient(135deg, ${COLORS.steel} 0%, ${COLORS.navy} 100%)`,
-      }}
+      style={{ background: COLORS.navy }}
     >
-      <svg
-        className="absolute inset-0 w-full h-full opacity-20"
+      <img
+        src={truckImage}
+        alt="Truck used for freight dispatching"
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ opacity: 0.62 }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{ background: "rgba(6,18,32,0.46)" }}
         aria-hidden="true"
-      >
-        <pattern
-          id="diag"
-          width="18"
-          height="18"
-          patternTransform="rotate(45)"
-          patternUnits="userSpaceOnUse"
-        >
-          <line
-            x1="0"
-            y1="0"
-            x2="0"
-            y2="18"
-            stroke={COLORS.amber}
-            strokeWidth="2"
-          />
-        </pattern>
-        <rect width="100%" height="100%" fill="url(#diag)" />
-      </svg>
+      />
       <Icon
         size={size}
         color={COLORS.white}
