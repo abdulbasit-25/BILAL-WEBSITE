@@ -534,6 +534,14 @@ const SEO_META = {
     description:
       "Tell us about your truck and lanes — a dispatcher follows up the same business day.",
   },
+  "/privacy-policy": {
+    title: `Privacy Policy | ${CONFIG.companyName}`,
+    description: `Learn how ${CONFIG.companyName} collects, uses, and protects information submitted through our website and dispatch services.`,
+  },
+  "/terms-and-conditions": {
+    title: `Terms & Conditions | ${CONFIG.companyName}`,
+    description: `Review the terms that apply when you use the ${CONFIG.companyName} website or dispatch services.`,
+  },
 };
 
 /* ============================================================
@@ -3183,6 +3191,198 @@ function ContactPage() {
 }
 
 /* ============================================================
+   PAGE: LEGAL
+   ============================================================ */
+const LEGAL_SECTIONS = {
+  privacy: [
+    {
+      title: "Information We Collect",
+      paragraphs: [
+        `When you contact ${CONFIG.companyName}, request a consultation, or use our website, we may collect information you choose to provide, such as your name, phone number, email address, company details, truck information, location, and operating preferences. We may also receive basic technical information, including browser, device, and website usage data.`,
+      ],
+    },
+    {
+      title: "How We Use Information",
+      paragraphs: [
+        `We use information to respond to inquiries, provide and improve dispatch services, communicate about loads and consultations, maintain website functionality, and protect our business and users. We may also use information to comply with legal obligations and keep appropriate business records.`,
+      ],
+    },
+    {
+      title: "How We Share Information",
+      paragraphs: [
+        "We do not sell personal information. We may share information with service providers that help us operate the website or communicate with you, and when necessary to provide requested dispatch services, comply with law, protect rights, or respond to a legal process. Those providers are expected to handle information only for the services they perform for us.",
+      ],
+    },
+    {
+      title: "Cookies and Tracking",
+      paragraphs: [
+        "Our website may use cookies or similar technologies to remember preferences, understand website traffic, and improve the user experience. You can adjust cookie controls through your browser settings, though disabling cookies may affect some website functionality.",
+      ],
+    },
+    {
+      title: "Data Retention and Security",
+      paragraphs: [
+        "We retain information for as long as reasonably necessary for the purposes described in this policy, including business, legal, and accounting needs. We use reasonable administrative, technical, and organizational measures to protect information, but no method of transmission or storage is completely secure.",
+      ],
+    },
+    {
+      title: "Your Choices",
+      paragraphs: [
+        `You may contact us to ask about the personal information we hold about you, request a correction, or ask us to stop using your information for certain communications. To make a request, email ${CONFIG.email}. We may need to verify your identity before completing a request.`,
+      ],
+    },
+    {
+      title: "Updates to This Policy",
+      paragraphs: [
+        "We may update this Privacy Policy as our services or legal requirements change. The revised version will be posted on this page with an updated effective date.",
+      ],
+    },
+  ],
+  terms: [
+    {
+      title: "Using This Website",
+      paragraphs: [
+        `This website is provided by ${CONFIG.companyName} for informational and business communication purposes. By using the website, you agree to use it lawfully and not to interfere with its operation, misrepresent your identity, or submit content that is unlawful or harmful.`,
+      ],
+    },
+    {
+      title: "Dispatch Services",
+      paragraphs: [
+        `${CONFIG.companyName} provides dispatching and freight-management support, including load searching, rate negotiation, broker communication, documentation assistance, and dispatch support. Service details, availability, and fees are governed by the agreement or written terms provided to each client.`,
+      ],
+    },
+    {
+      title: "Carrier Responsibilities",
+      paragraphs: [
+        "Carriers remain responsible for their operating authority, permits, insurance, equipment, safety, compliance, tax obligations, driver decisions, and the accuracy of information they provide. Dispatch support does not transfer those responsibilities to Keep Hauling or replace independent professional, legal, or compliance advice.",
+      ],
+    },
+    {
+      title: "No Guarantee of Freight or Earnings",
+      paragraphs: [
+        "We work to identify and negotiate freight that fits the information and preferences provided by a carrier. Freight availability, broker decisions, rates, schedules, delays, and business results are outside our complete control. We do not guarantee a particular load, rate, revenue level, volume of freight, or profit.",
+      ],
+    },
+    {
+      title: "Website Content",
+      paragraphs: [
+        "We aim to keep website information accurate and current, but descriptions, examples, rates, and availability may change and should not be treated as a guarantee or binding offer. We may update, suspend, or remove website content at any time.",
+      ],
+    },
+    {
+      title: "Limitation of Liability",
+      paragraphs: [
+        "To the fullest extent permitted by law, Keep Hauling is not responsible for indirect, incidental, special, consequential, or lost-profit damages arising from use of the website or information provided through it. Nothing in these terms limits liability that cannot legally be limited.",
+      ],
+    },
+    {
+      title: "Changes and Contact",
+      paragraphs: [
+        `We may update these Terms & Conditions from time to time. Continued use of the website after changes are posted means you accept the revised terms. Questions about these terms may be sent to us at ${CONFIG.email}.`,
+      ],
+    },
+  ],
+};
+
+function LegalPage({ type }) {
+  const isPrivacy = type === "privacy";
+  const title = isPrivacy ? "PRIVACY POLICY" : "TERMS & CONDITIONS";
+  const eyebrow = isPrivacy ? "Your Information" : "Website Use";
+  const intro = isPrivacy
+    ? `This Privacy Policy explains how ${CONFIG.companyName} handles information collected through this website and our dispatch services.`
+    : `These Terms & Conditions describe the rules for using this website and the general terms that apply to our dispatch support.`;
+  const sections = isPrivacy ? LEGAL_SECTIONS.privacy : LEGAL_SECTIONS.terms;
+  const path = isPrivacy ? "/privacy-policy" : "/terms-and-conditions";
+
+  return (
+    <>
+      <PageHero eyebrow={eyebrow} title={title} subtitle={intro} />
+      <section className="py-16 md:py-24" style={{ background: COLORS.white }}>
+        <div className="max-w-4xl mx-auto px-5 md:px-8">
+          <Breadcrumb items={[{ label: "Home", to: "/" }, { label: title }]} />
+          <p
+            className="text-sm mb-12"
+            style={{ color: "#6B7280", fontFamily: "'Inter', sans-serif" }}
+          >
+            Effective date: September 20, 2026
+          </p>
+          <div className="flex flex-col gap-10">
+            {sections.map((section) => (
+              <article key={section.title}>
+                <h2
+                  className="text-2xl md:text-3xl mb-3"
+                  style={{
+                    color: COLORS.navy,
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    letterSpacing: "0.01em",
+                  }}
+                >
+                  {section.title.toUpperCase()}
+                </h2>
+                {section.paragraphs.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className="text-sm md:text-base leading-7 mb-3"
+                    style={{
+                      color: "#4B5563",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </article>
+            ))}
+          </div>
+          <div
+            className="mt-14 p-6 md:p-8"
+            style={{
+              background: COLORS.paper,
+              borderLeft: `4px solid ${COLORS.red}`,
+            }}
+          >
+            <p
+              className="text-sm leading-6"
+              style={{ color: COLORS.navy, fontFamily: "'Inter', sans-serif" }}
+            >
+              Questions about this {isPrivacy ? "policy" : "agreement"}? Contact
+              us at{" "}
+              <a
+                href={`mailto:${CONFIG.email}`}
+                style={{ color: COLORS.red, fontWeight: 700 }}
+              >
+                {CONFIG.email}
+              </a>
+              .
+            </p>
+          </div>
+          <div
+            className="mt-10 flex flex-wrap gap-5 text-sm font-bold"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            <RouteLink
+              to={
+                path === "/privacy-policy"
+                  ? "/terms-and-conditions"
+                  : "/privacy-policy"
+              }
+              style={{ color: COLORS.red }}
+            >
+              {isPrivacy ? "Read Terms & Conditions" : "Read Privacy Policy"}
+              <ArrowRight size={14} className="inline ml-2" />
+            </RouteLink>
+            <RouteLink to="/contact" style={{ color: COLORS.navy }}>
+              Contact Keep Hauling
+              <ArrowRight size={14} className="inline ml-2" />
+            </RouteLink>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 function Footer() {
@@ -3340,18 +3540,20 @@ function Footer() {
             Reserved.
           </p>
           <div className="flex items-center gap-5 flex-wrap">
-            <span
+            <RouteLink
+              to="/privacy-policy"
               className="text-xs"
               style={{ color: "#7C8896", fontFamily: "'Inter', sans-serif" }}
             >
               Privacy Policy
-            </span>
-            <span
+            </RouteLink>
+            <RouteLink
+              to="/terms-and-conditions"
               className="text-xs"
               style={{ color: "#7C8896", fontFamily: "'Inter', sans-serif" }}
             >
               Terms &amp; Conditions
-            </span>
+            </RouteLink>
           </div>
         </div>
       </div>
@@ -3374,6 +3576,8 @@ function PageSwitch({ route }) {
   if (parts[0] === "coverage") return <CoveragePage />;
   if (parts[0] === "faq") return <FAQPage />;
   if (parts[0] === "contact") return <ContactPage />;
+  if (parts[0] === "privacy-policy") return <LegalPage type="privacy" />;
+  if (parts[0] === "terms-and-conditions") return <LegalPage type="terms" />;
   return <HomePage />;
 }
 
