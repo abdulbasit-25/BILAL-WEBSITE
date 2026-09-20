@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import emailjs from "@emailjs/browser";
 import truckImage from "./assets/truck.jpg";
 import {
   Menu,
@@ -60,6 +61,11 @@ const CONFIG = {
   statesCovered: "48",
   supportHours: "24/7",
   siteUrl: "https://www.keephauling.com",
+  emailjs: {
+    serviceId: "service_rxfgs4l",
+    templateId: "template_buy3eag",
+    publicKey: "Vpm65oOCm_H0YUDdE",
+  },
   social: { facebook: "#", instagram: "#", linkedin: "#" },
 };
 
@@ -2837,6 +2843,8 @@ function ContactPage() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState("");
   const required = [
     "fullName",
     "phone",
@@ -2871,8 +2879,30 @@ function ContactPage() {
   };
 
   const confirmSubmit = () => {
-    setSubmitted(true);
-    setConfirmOpen(false);
+    setIsSending(true);
+    setSendError("");
+
+    emailjs
+      .send(
+        CONFIG.emailjs.serviceId,
+        CONFIG.emailjs.templateId,
+        {
+          ...form,
+          reply_to: form.email,
+          submitted_at: new Date().toLocaleString(),
+        },
+        { publicKey: CONFIG.emailjs.publicKey },
+      )
+      .then(() => {
+        setSubmitted(true);
+        setConfirmOpen(false);
+      })
+      .catch(() => {
+        setSendError(
+          "We could not send your request. Please try again or call us directly.",
+        );
+      })
+      .finally(() => setIsSending(false));
   };
 
   const fieldProps = { form, handleChange, errors, required, colors: COLORS };
@@ -3096,6 +3126,15 @@ function ContactPage() {
                 >
                   Please confirm you want to send this consultation request.
                 </p>
+                {sendError && (
+                  <p
+                    className="mb-4 text-sm font-semibold"
+                    style={{ color: COLORS.red }}
+                    role="alert"
+                  >
+                    {sendError}
+                  </p>
+                )}
                 <div className="flex justify-end gap-3">
                   <button
                     type="button"
@@ -3108,10 +3147,15 @@ function ContactPage() {
                   <button
                     type="button"
                     onClick={confirmSubmit}
+                    disabled={isSending}
                     className="rounded-md px-4 py-2 text-sm font-bold"
-                    style={{ background: COLORS.red, color: COLORS.white }}
+                    style={{
+                      background: isSending ? "#9CA3AF" : COLORS.red,
+                      color: COLORS.white,
+                      cursor: isSending ? "wait" : "pointer",
+                    }}
                   >
-                    Confirm
+                    {isSending ? "Sending..." : "Confirm"}
                   </button>
                 </div>
               </div>
