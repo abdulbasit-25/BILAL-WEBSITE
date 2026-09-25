@@ -2,7 +2,7 @@
 
 ## Summary
 
-This repository is a Vite + React + Tailwind website project for a trucking dispatch business. It includes a responsive landing page, multiple content sections, a working contact form, and several UX improvements already implemented.
+This repository is a Vite + React + Tailwind website project for a trucking dispatch business. It includes a responsive multi-page marketing site, a working contact form, route-aware freight imagery, centralized theme tokens, and several UX improvements.
 
 ## Verified project state
 
@@ -11,6 +11,8 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 - Dependency manager: npm
 - Build status: verified successfully with `npm run build`
 - Source files present: `src/App.jsx`, `src/index.css`, `src/main.jsx`
+- Theme system: centralized CSS variables in `src/index.css`, with compatibility tokens consumed by `src/App.jsx`
+- Image system: generated hero, warehouse, and equipment-specific JPG assets in `src/assets/`
 - Email delivery: EmailJS connected through the contact form
 - Production domain: `https://www.keephauling.com/`
 - Supporting config present: `vite.config.js`, `tailwind.config.js`, `postcss.config.js`, `package.json`
@@ -45,7 +47,14 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 - Added expandable FAQ behavior
 - Added floating contact button
 - Added truck image asset at `src/assets/truck.jpg`
-- Replaced generated image placeholders with the reusable truck asset in `src/App.jsx`
+- Added `keep-hauling-hero.jpg` for homepage and CTA backdrops
+- Added `keep-hauling-warehouse.jpg` for interior page headers
+- Added equipment-specific images for dry van, reefer, flatbed, step deck, box truck, power only, and hotshot views
+- Wired the generated images into hero backdrops, service detail pages, equipment cards, and related equipment panels
+- Added descriptive alt text for equipment images and preserved decorative empty alt text for background images
+- Added Gemini image-generation instructions and prompts in [GEMINI_IMAGE_PROMPTS.md](GEMINI_IMAGE_PROMPTS.md)
+- Moved global fonts, focus states, reduced-motion behavior, theme tokens, loader styles, and mobile spacer styles into `src/index.css`
+- Added compatibility mappings so the current industrial theme resolves all color tokens used by `src/App.jsx`
 - Added canonical production-domain SEO metadata and structured data
 - Added Open Graph, Twitter, Googlebot, and theme-color metadata
 - Added EmailJS submission handling with validation, confirmation, loading, and error states
@@ -53,14 +62,15 @@ This repository is a Vite + React + Tailwind website project for a trucking disp
 
 ## Still needed for production polish
 
-- Real business branding, logo, and brand colors review
+- Final real business branding and logo review
 - Real client testimonials and case studies
 - Deployment configuration for hosting
 - Analytics and conversion tracking
 - Performance tuning and asset optimization
 - Additional accessibility refinements
 - Content cleanup and final business copy review
+- Final visual QA across all routes and mobile breakpoints
 
 ## Notes
 
-This file reflects the current audit of the repo. The active app is [src/App.jsx](src/App.jsx); [src/App copy.jsx](src/App%20copy.jsx) remains unchanged as a reference copy.
+This file reflects the current audit of the repo. The active app is [src/App.jsx](src/App.jsx), the shared theme is [src/index.css](src/index.css), and [src/App copy.jsx](src/App%20copy.jsx) remains unchanged as a reference copy.
