@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   KEEP HAULING FREIGHT DESIGN SYSTEM
+   ========================================================= */
+
 :root {
   --color-navy: #0b1d33;
   --color-navy-deep: #061220;
@@ -15,47 +19,177 @@
   --color-red: #e63946;
   --color-red-dark: #c62b38;
   --color-amber: #f4a81e;
-  --color-text-muted: #6b7280;
+
+  --color-background: var(--color-white);
+  --color-surface: var(--color-white);
+  --color-surface-soft: var(--color-paper);
+  --color-foreground: var(--color-navy);
+  --color-foreground-soft: #25364a;
+  --color-primary: var(--color-navy);
+  --color-primary-hover: var(--color-navy-deep);
+  --color-accent: var(--color-red);
+  --color-accent-hover: var(--color-red-dark);
+  --color-sand: #d9e0e8;
+  --color-sand-light: #e7ecf1;
+  --color-muted: #6b7280;
+  --color-muted-light: #9ca6b2;
+  --color-border: #d1d5db;
+  --color-border-soft: #e5e7eb;
+  --color-success: #3d8b68;
+  --color-warning: var(--color-amber);
+  --color-danger: var(--color-red);
+  --color-text: var(--color-navy);
+  --color-text-muted: #4b5563;
   --color-text-soft: #9ca6b2;
   --color-text-light: #b8c1cc;
-  --color-text-on-dark: #cbd5e0;
-  --color-border: #e5e7eb;
-  --color-input-border: #d1d5db;
+  --color-text-on-dark: #ffffff;
+  --color-text-on-dark-muted: #cbd5e0;
+  --color-border-dark: rgba(255, 255, 255, 0.16);
+
   --font-body: "Inter", sans-serif;
   --font-display: "Bebas Neue", sans-serif;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --shadow-sm: 0 1px 2px rgba(6, 18, 32, 0.08);
+  --shadow-md: 0 8px 24px rgba(6, 18, 32, 0.12);
+  --shadow-lg: 0 18px 45px rgba(6, 18, 32, 0.18);
 }
+
+/* =========================================================
+   BASE
+   ========================================================= */
 
 html,
 body,
 #root {
   margin: 0;
   padding: 0;
-}
-
-body {
-  background: var(--color-white);
-  color: var(--color-navy);
-  font-family: var(--font-body);
+  min-height: 100%;
 }
 
 html {
   scroll-behavior: smooth;
+  background: var(--color-background);
 }
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  color: var(--color-foreground);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.98;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
+}
+
+h3 {
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  line-height: 1.15;
+}
+
+p {
+  color: var(--color-text-muted);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+}
+
+/* =========================================================
+   LINKS & BUTTONS
+   ========================================================= */
 
 a,
 button {
   cursor: pointer;
 }
 
-input:focus {
-  outline: 2px solid var(--color-red);
-  outline-offset: 1px;
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    opacity 180ms ease;
 }
 
+a:hover {
+  color: var(--color-red);
+}
+
+button {
+  font-family: inherit;
+}
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+input,
+textarea,
+select {
+  font-family: var(--font-body);
+  color: var(--color-foreground);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.16);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-muted-light);
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
 a:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--color-red);
-  outline-offset: 2px;
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 .skip-link {
@@ -63,10 +197,10 @@ button:focus-visible {
   left: -9999px;
   top: 0;
   z-index: 200;
-  background: var(--color-white);
-  color: var(--color-navy);
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
   padding: 0.75rem 1rem;
-  font-family: var(--font-body);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
   font-size: 13px;
   font-weight: 700;
 }
@@ -76,39 +210,117 @@ button:focus-visible {
   top: 12px;
 }
 
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* =========================================================
+   DARK SECTIONS
+   ========================================================= */
+
+.section-dark {
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+}
+
+.section-dark h1,
+.section-dark h2,
+.section-dark h3,
+.section-dark h4 {
+  color: var(--color-text-on-dark);
+}
+
+.section-dark p {
+  color: var(--color-text-on-dark-muted);
+}
+
+/* =========================================================
+   PAGE LOADER
+   ========================================================= */
+
 .page-loader {
   position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(11, 31, 51, 0.72);
-  color: var(--color-white);
-  font-weight: 700;
+  background: rgba(6, 18, 32, 0.92);
+  color: var(--color-text-on-dark);
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   z-index: 120;
+  backdrop-filter: blur(8px);
 }
 
 .page-loader::before {
   content: "";
-  width: 42px;
-  height: 42px;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: var(--color-white);
+  width: 38px;
+  height: 38px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: var(--color-text-on-dark);
   border-radius: 50%;
   display: block;
   margin: 0 auto 12px;
   animation: spin 0.9s linear infinite;
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 .mobile-bottom-spacer {
   height: 60px;
 }
 
+@media (max-width: 768px) {
+  h1 {
+    font-size: clamp(2.4rem, 12vw, 4rem);
+  }
+
+  h2 {
+    font-size: clamp(1.9rem, 9vw, 3rem);
+  }
+}
+
+/* =========================================================
+   FLOATING CONTACT
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .floating-contact {
+    bottom: 2rem;
+    right: 2rem;
+  }
+}
+
+/* =========================================================
+   MOTION
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -118,12 +330,9 @@ button:focus-visible {
   }
 }
 
-@media (min-width: 1024px) {
-  .floating-contact {
-    bottom: 2rem;
-    right: 2rem;
-  }
-}
+/* =========================================================
+   PRINT
+   ========================================================= */
 
 @media print {
   .skip-link,
@@ -141,12 +350,12 @@ button:focus-visible {
   }
 
   body {
-    background: var(--color-white) !important;
-    color: #000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
   }
 
   a {
-    color: #000 !important;
+    color: #000000 !important;
     text-decoration: none !important;
   }
 }
