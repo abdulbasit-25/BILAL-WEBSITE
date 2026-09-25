@@ -1,6 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-navy: #0b1d33;
+  --color-navy-deep: #061220;
+  --color-steel: #1f3a5f;
+  --color-charcoal: #12181f;
+  --color-white: #ffffff;
+  --color-paper: #eef1f5;
+  --color-ink: #4b5563;
+  --color-red: #e63946;
+  --color-red-dark: #c62b38;
+  --color-amber: #f4a81e;
+  --color-text-muted: #6b7280;
+  --color-text-soft: #9ca6b2;
+  --color-text-light: #b8c1cc;
+  --color-text-on-dark: #cbd5e0;
+  --color-border: #e5e7eb;
+  --color-input-border: #d1d5db;
+  --font-body: "Inter", sans-serif;
+  --font-display: "Bebas Neue", sans-serif;
+}
 
 html,
 body,
@@ -9,13 +32,30 @@ body,
   padding: 0;
 }
 
+body {
+  background: var(--color-white);
+  color: var(--color-navy);
+  font-family: var(--font-body);
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-body {
-  background: #ffffff;
-  color: #0b1d33;
+a,
+button {
+  cursor: pointer;
+}
+
+input:focus {
+  outline: 2px solid var(--color-red);
+  outline-offset: 1px;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: 2px;
 }
 
 .skip-link {
@@ -23,15 +63,17 @@ body {
   left: -9999px;
   top: 0;
   z-index: 200;
-  background: #ffffff;
-  color: #0b1d33;
+  background: var(--color-white);
+  color: var(--color-navy);
   padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 13px;
   font-weight: 700;
 }
 
 .skip-link:focus {
-  left: 1rem;
-  top: 1rem;
+  left: 12px;
+  top: 12px;
 }
 
 .page-loader {
@@ -40,7 +82,7 @@ body {
   display: grid;
   place-items: center;
   background: rgba(11, 31, 51, 0.72);
-  color: #ffffff;
+  color: var(--color-white);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -52,11 +94,22 @@ body {
   width: 42px;
   height: 42px;
   border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #ffffff;
+  border-top-color: var(--color-white);
   border-radius: 50%;
   display: block;
   margin: 0 auto 12px;
   animation: spin 0.9s linear infinite;
+}
+
+.mobile-bottom-spacer {
+  height: 60px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 @keyframes spin {
@@ -88,7 +141,7 @@ body {
   }
 
   body {
-    background: #fff !important;
+    background: var(--color-white) !important;
     color: #000 !important;
   }
 
