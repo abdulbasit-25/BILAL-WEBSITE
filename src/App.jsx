@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import emailjs from "@emailjs/browser";
 import truckImage from "./assets/truck.jpg";
+import heroImage from "./assets/keep-hauling-hero.jpg";
+import warehouseImage from "./assets/keep-hauling-warehouse.jpg";
+import dryVanImage from "./assets/equipment-dry-van.jpg";
+import reeferImage from "./assets/equipment-reefer.jpg";
+import flatbedImage from "./assets/equipment-flatbed.jpg";
+import stepDeckImage from "./assets/equipment-step-deck.jpg";
+import boxTruckImage from "./assets/equipment-box-truck.jpg";
+import powerOnlyImage from "./assets/equipment-power-only.jpg";
+import hotshotImage from "./assets/equipment-hotshot.jpg";
 import {
   Menu,
   X,
@@ -177,6 +186,7 @@ const EQUIPMENT = [
     key: "dry-van",
     name: "Dry Van",
     icon: Container,
+    image: dryVanImage,
     tagline: "Steady freight, dialed-in lanes.",
     desc: "The most common trailer on the road — and the easiest to keep loaded consistently when someone is actively working your lanes.",
     benefits: [
@@ -196,6 +206,7 @@ const EQUIPMENT = [
     key: "reefer",
     name: "Reefer",
     icon: Snowflake,
+    image: reeferImage,
     tagline: "Temperature-controlled freight, handled right.",
     desc: "Reefer freight leaves less room for error — tighter windows, stricter brokers, and freight that can't sit. Our dispatchers know the difference.",
     benefits: [
@@ -215,6 +226,7 @@ const EQUIPMENT = [
     key: "flatbed",
     name: "Flatbed",
     icon: Layers,
+    image: flatbedImage,
     tagline: "Open-deck freight, planned around securement.",
     desc: "Flatbed work rewards dispatchers who understand tarping, securement, and permit requirements — not just who can find a load board listing.",
     benefits: [
@@ -234,6 +246,7 @@ const EQUIPMENT = [
     key: "step-deck",
     name: "Step Deck",
     icon: Gauge,
+    image: stepDeckImage,
     tagline: "Taller loads, planned the right way.",
     desc: "Step deck freight often means oversized or height-restricted loads. We plan routes and permits around the load, not the other way around.",
     benefits: [
@@ -253,6 +266,7 @@ const EQUIPMENT = [
     key: "box-truck",
     name: "Box Truck",
     icon: Package,
+    image: boxTruckImage,
     tagline: "Regional and local freight, kept full.",
     desc: "Box truck operators need tighter, more local freight — we focus on regional lanes and quick-turn loads instead of forcing you into OTR runs.",
     benefits: [
@@ -272,6 +286,7 @@ const EQUIPMENT = [
     key: "power-only",
     name: "Power Only",
     icon: Zap,
+    image: powerOnlyImage,
     tagline: "Your tractor, matched to trailers that pay.",
     desc: "Power-only freight moves fast and can leave you guessing on trailer pools and drop yards. We keep you matched to freight that actually works.",
     benefits: [
@@ -291,6 +306,7 @@ const EQUIPMENT = [
     key: "hotshot",
     name: "Hotshot",
     icon: Truck,
+    image: hotshotImage,
     tagline: "Time-sensitive freight, moved fast.",
     desc: "Hotshot freight lives and dies on speed and communication. Our dispatchers prioritize fast-turn loads that fit your rig and timeline.",
     benefits: [
@@ -812,11 +828,11 @@ function RouteLink({
 }
 
 /* Reusable truck image backdrop for hero and interior page headers. */
-function RouteBackdrop({ variant = "hero" }) {
+function RouteBackdrop({ variant = "hero", image }) {
   return (
     <div className="absolute inset-0" aria-hidden="true">
       <img
-        src={truckImage}
+        src={image || (variant === "page" ? warehouseImage : heroImage)}
         alt=""
         className="h-full w-full object-cover"
         decoding="async"
@@ -834,15 +850,21 @@ function RouteBackdrop({ variant = "hero" }) {
 }
 
 /* Truck image panel used for equipment cards until dedicated photos are added. */
-function EquipmentPanel({ Icon, size = 40, className = "" }) {
+function EquipmentPanel({
+  Icon,
+  image,
+  alt = "Truck used for freight dispatching",
+  size = 40,
+  className = "",
+}) {
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${className}`}
       style={{ background: COLORS.navy }}
     >
       <img
-        src={truckImage}
-        alt="Truck used for freight dispatching"
+        src={image || truckImage}
+        alt={alt}
         className="absolute inset-0 h-full w-full object-cover"
         loading="lazy"
         decoding="async"
@@ -863,13 +885,13 @@ function EquipmentPanel({ Icon, size = 40, className = "" }) {
   );
 }
 
-function PageHero({ eyebrow, title, subtitle }) {
+function PageHero({ eyebrow, title, subtitle, image = warehouseImage }) {
   return (
     <section
       className="relative pt-32 pb-16 md:pt-40 md:pb-20 overflow-hidden"
       style={{ background: COLORS.navy }}
     >
-      <RouteBackdrop variant="page" />
+      <RouteBackdrop variant="page" image={image} />
       <div className="relative max-w-7xl mx-auto px-5 md:px-8">
         <Eyebrow>{eyebrow}</Eyebrow>
         <Headline
@@ -1322,6 +1344,8 @@ function EquipmentGrid({ limit }) {
           >
             <EquipmentPanel
               Icon={e.icon}
+              image={e.image}
+              alt={`${e.name} truck and trailer`}
               size={40}
               className="h-40 group-hover:scale-[1.02] transition-transform duration-200"
             />
@@ -1841,7 +1865,7 @@ function FinalCTA() {
       className="relative py-24 md:py-32 overflow-hidden"
       style={{ background: COLORS.charcoal }}
     >
-      <RouteBackdrop variant="page" />
+      <RouteBackdrop variant="hero" image={heroImage} />
       <div className="relative max-w-3xl mx-auto px-5 md:px-8 text-center">
         <Reveal>
           <h2
@@ -1883,7 +1907,7 @@ function HomePage() {
         className="relative flex items-center overflow-hidden"
         style={{ minHeight: "92vh", background: COLORS.navy }}
       >
-        <RouteBackdrop variant="hero" />
+        <RouteBackdrop variant="hero" image={heroImage} />
         <div className="relative max-w-7xl mx-auto px-5 md:px-8 pt-28 pb-16 md:py-32 w-full">
           <div className="max-w-2xl">
             <Reveal>
@@ -2327,7 +2351,7 @@ function ServiceDetailPage({ eqKey }) {
         className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden"
         style={{ background: COLORS.navy }}
       >
-        <RouteBackdrop variant="page" />
+        <RouteBackdrop variant="page" image={eq.image} />
         <div className="relative max-w-7xl mx-auto px-5 md:px-8">
           <Breadcrumb
             items={[
@@ -2399,7 +2423,13 @@ function ServiceDetailPage({ eqKey }) {
           </Reveal>
           <Reveal delay={100}>
             <div className="overflow-hidden">
-              <EquipmentPanel Icon={eq.icon} size={52} className="h-52" />
+              <EquipmentPanel
+                Icon={eq.icon}
+                image={eq.image}
+                alt={`${eq.name} truck and trailer`}
+                size={52}
+                className="h-52"
+              />
               <div className="p-8" style={{ background: COLORS.paper }}>
                 <Eyebrow>Typical Freight</Eyebrow>
                 <h3
@@ -2459,7 +2489,13 @@ function ServiceDetailPage({ eqKey }) {
                   to={`/services/${o.key}`}
                   className="block bg-white overflow-hidden"
                 >
-                  <EquipmentPanel Icon={o.icon} size={28} className="h-28" />
+                  <EquipmentPanel
+                    Icon={o.icon}
+                    image={o.image}
+                    alt={`${o.name} truck and trailer`}
+                    size={28}
+                    className="h-28"
+                  />
                   <div
                     className="p-5"
                     style={{ borderLeft: `3px solid ${COLORS.red}` }}
