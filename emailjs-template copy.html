@@ -1,0 +1,566 @@
+<!-- EmailJS subject: New dispatch consultation request from {{fullName}} -->
+<!-- Same variables as before: fullName, phone, email, companyName, truckType, numTrucks, location, operatingArea, yearsInBusiness, mcNumber, source, submitted_at, reply_to -->
+
+<!-- Preheader (inbox preview text) -->
+<div
+  style="
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    font-size: 1px;
+    line-height: 1px;
+    color: #eef1f5;
+  "
+>
+  {{fullName}} · {{companyName}} · {{numTrucks}} truck(s) · {{operatingArea}}
+</div>
+
+<style>
+  @media only screen and (max-width: 640px) {
+    .container {
+      width: 100% !important;
+    }
+    .px {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+    .stat {
+      display: block !important;
+      width: 100% !important;
+      border-right: 0 !important;
+      border-bottom: 1px solid #e5e7eb !important;
+    }
+    .btn {
+      display: block !important;
+      width: 100% !important;
+      padding: 0 0 10px 0 !important;
+    }
+    .btn a {
+      display: block !important;
+    }
+    .lbl {
+      display: block !important;
+      width: 100% !important;
+      padding-bottom: 2px !important;
+      border-bottom: 0 !important;
+    }
+    .val {
+      display: block !important;
+      width: 100% !important;
+      padding-top: 0 !important;
+    }
+  }
+</style>
+
+<table
+  role="presentation"
+  width="100%"
+  cellspacing="0"
+  cellpadding="0"
+  bgcolor="#eef1f5"
+  style="
+    margin: 0;
+    padding: 24px 12px;
+    background: #eef1f5;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #0b1d33;
+  "
+>
+  <tr>
+    <td align="center">
+      <table
+        role="presentation"
+        class="container"
+        width="620"
+        cellspacing="0"
+        cellpadding="0"
+        bgcolor="#ffffff"
+        style="
+          width: 620px;
+          max-width: 620px;
+          background: #ffffff;
+          border-radius: 8px;
+          overflow: hidden;
+        "
+      >
+        <!-- Brand bar -->
+        <tr>
+          <td
+            class="px"
+            bgcolor="#0b1d33"
+            style="
+              padding: 18px 32px;
+              background: #0b1d33;
+              border-bottom: 4px solid #e63946;
+            "
+          >
+            <table
+              role="presentation"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+            >
+              <tr>
+                <td
+                  style="
+                    font-size: 15px;
+                    font-weight: bold;
+                    letter-spacing: 2px;
+                    color: #ffffff;
+                    text-transform: uppercase;
+                  "
+                >
+                  Keep Hauling
+                </td>
+                <td
+                  align="right"
+                  style="
+                    font-size: 11px;
+                    letter-spacing: 1px;
+                    color: #9fb0c6;
+                    text-transform: uppercase;
+                  "
+                >
+                  New Lead
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Hero -->
+        <tr>
+          <td class="px" style="padding: 32px 32px 8px">
+            <p
+              style="
+                margin: 0 0 10px;
+                font-size: 11px;
+                font-weight: bold;
+                letter-spacing: 1.5px;
+                color: #e63946;
+                text-transform: uppercase;
+              "
+            >
+              Dispatch Consultation Request
+            </p>
+            <h1
+              style="
+                margin: 0 0 8px;
+                font-size: 26px;
+                line-height: 1.25;
+                color: #0b1d33;
+              "
+            >
+              {{fullName}}
+            </h1>
+            <p
+              style="
+                margin: 0;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #4b5563;
+              "
+            >
+              {{companyName}} &nbsp;&middot;&nbsp; Submitted {{submitted_at}}
+            </p>
+          </td>
+        </tr>
+
+        <!-- Action buttons -->
+        <tr>
+          <td class="px" style="padding: 20px 32px 8px">
+            <table role="presentation" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="btn" style="padding-right: 10px">
+                  <a
+                    href="tel:{{phone}}"
+                    style="
+                      display: inline-block;
+                      padding: 12px 22px;
+                      background: #e63946;
+                      color: #ffffff;
+                      font-size: 14px;
+                      font-weight: bold;
+                      text-decoration: none;
+                      border-radius: 6px;
+                      text-align: center;
+                    "
+                  >
+                    Call {{phone}}
+                  </a>
+                </td>
+                <td class="btn">
+                  <a
+                    href="mailto:{{email}}"
+                    style="
+                      display: inline-block;
+                      padding: 10px 22px;
+                      background: #ffffff;
+                      color: #0b1d33;
+                      font-size: 14px;
+                      font-weight: bold;
+                      text-decoration: none;
+                      border-radius: 6px;
+                      border: 2px solid #0b1d33;
+                      text-align: center;
+                    "
+                  >
+                    Reply by email
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Key stats strip -->
+        <tr>
+          <td class="px" style="padding: 24px 32px 8px">
+            <table
+              role="presentation"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+              bgcolor="#f6f8fb"
+              style="
+                background: #f6f8fb;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+              "
+            >
+              <tr>
+                <td
+                  class="stat"
+                  width="33%"
+                  align="center"
+                  style="padding: 16px 8px; border-right: 1px solid #e5e7eb"
+                >
+                  <div
+                    style="font-size: 22px; font-weight: bold; color: #0b1d33"
+                  >
+                    {{numTrucks}}
+                  </div>
+                  <div
+                    style="
+                      margin-top: 4px;
+                      font-size: 11px;
+                      letter-spacing: 1px;
+                      color: #6b7280;
+                      text-transform: uppercase;
+                    "
+                  >
+                    Trucks
+                  </div>
+                </td>
+                <td
+                  class="stat"
+                  width="34%"
+                  align="center"
+                  style="padding: 16px 8px; border-right: 1px solid #e5e7eb"
+                >
+                  <div
+                    style="
+                      font-size: 16px;
+                      font-weight: bold;
+                      color: #0b1d33;
+                      line-height: 26px;
+                    "
+                  >
+                    {{truckType}}
+                  </div>
+                  <div
+                    style="
+                      margin-top: 4px;
+                      font-size: 11px;
+                      letter-spacing: 1px;
+                      color: #6b7280;
+                      text-transform: uppercase;
+                    "
+                  >
+                    Truck type
+                  </div>
+                </td>
+                <td
+                  class="stat"
+                  width="33%"
+                  align="center"
+                  style="padding: 16px 8px"
+                >
+                  <div
+                    style="font-size: 22px; font-weight: bold; color: #0b1d33"
+                  >
+                    {{yearsInBusiness}}
+                  </div>
+                  <div
+                    style="
+                      margin-top: 4px;
+                      font-size: 11px;
+                      letter-spacing: 1px;
+                      color: #6b7280;
+                      text-transform: uppercase;
+                    "
+                  >
+                    Years in business
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Section: Contact -->
+        <tr>
+          <td class="px" style="padding: 28px 32px 0">
+            <p
+              style="
+                margin: 0 0 4px;
+                font-size: 11px;
+                font-weight: bold;
+                letter-spacing: 1.5px;
+                color: #0b1d33;
+                text-transform: uppercase;
+                border-bottom: 2px solid #0b1d33;
+                padding-bottom: 8px;
+              "
+            >
+              Contact
+            </p>
+            <table
+              role="presentation"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+              style="border-collapse: collapse; font-size: 14px"
+            >
+              <tr>
+                <td
+                  class="lbl"
+                  width="36%"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    color: #6b7280;
+                  "
+                >
+                  Full name
+                </td>
+                <td
+                  class="val"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-weight: bold;
+                  "
+                >
+                  {{fullName}}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="lbl"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    color: #6b7280;
+                  "
+                >
+                  Company
+                </td>
+                <td
+                  class="val"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-weight: bold;
+                  "
+                >
+                  {{companyName}}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="lbl"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    color: #6b7280;
+                  "
+                >
+                  Phone
+                </td>
+                <td
+                  class="val"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-weight: bold;
+                  "
+                >
+                  <a
+                    href="tel:{{phone}}"
+                    style="color: #c62b38; text-decoration: none"
+                    >{{phone}}</a
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="lbl" style="padding: 12px 0; color: #6b7280">
+                  Email
+                </td>
+                <td class="val" style="padding: 12px 0; font-weight: bold">
+                  <a
+                    href="mailto:{{email}}"
+                    style="color: #c62b38; text-decoration: none"
+                    >{{email}}</a
+                  >
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Section: Operations -->
+        <tr>
+          <td class="px" style="padding: 28px 32px 0">
+            <p
+              style="
+                margin: 0 0 4px;
+                font-size: 11px;
+                font-weight: bold;
+                letter-spacing: 1.5px;
+                color: #0b1d33;
+                text-transform: uppercase;
+                border-bottom: 2px solid #0b1d33;
+                padding-bottom: 8px;
+              "
+            >
+              Operations
+            </p>
+            <table
+              role="presentation"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+              style="border-collapse: collapse; font-size: 14px"
+            >
+              <tr>
+                <td
+                  class="lbl"
+                  width="36%"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    color: #6b7280;
+                  "
+                >
+                  Current location
+                </td>
+                <td
+                  class="val"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-weight: bold;
+                  "
+                >
+                  {{location}}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  class="lbl"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    color: #6b7280;
+                  "
+                >
+                  Operating area
+                </td>
+                <td
+                  class="val"
+                  style="
+                    padding: 12px 0;
+                    border-bottom: 1px solid #e5e7eb;
+                    font-weight: bold;
+                  "
+                >
+                  {{operatingArea}}
+                </td>
+              </tr>
+              <tr>
+                <td class="lbl" style="padding: 12px 0; color: #6b7280">
+                  MC number
+                </td>
+                <td class="val" style="padding: 12px 0; font-weight: bold">
+                  {{mcNumber}}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Section: Source -->
+        <tr>
+          <td class="px" style="padding: 28px 32px 32px">
+            <p
+              style="
+                margin: 0 0 4px;
+                font-size: 11px;
+                font-weight: bold;
+                letter-spacing: 1.5px;
+                color: #0b1d33;
+                text-transform: uppercase;
+                border-bottom: 2px solid #0b1d33;
+                padding-bottom: 8px;
+              "
+            >
+              Lead Source
+            </p>
+            <table
+              role="presentation"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+              style="font-size: 14px"
+            >
+              <tr>
+                <td
+                  class="lbl"
+                  width="36%"
+                  style="padding: 12px 0; color: #6b7280"
+                >
+                  Heard about us via
+                </td>
+                <td class="val" style="padding: 12px 0; font-weight: bold">
+                  {{source}}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td
+            class="px"
+            bgcolor="#0b1d33"
+            style="
+              padding: 20px 32px;
+              background: #0b1d33;
+              color: #c7d2e0;
+              font-size: 12px;
+              line-height: 1.6;
+            "
+          >
+            Reply directly to this email to reach
+            <strong style="color: #ffffff">{{fullName}}</strong> at
+            <a href="mailto:{{reply_to}}" style="color: #ffffff">{{reply_to}}</a
+            >.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
