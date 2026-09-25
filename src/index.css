@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -47,6 +47,14 @@
   --color-text-on-dark: #f5f1ea;
   --color-text-on-dark-muted: #cdc3ae;
   --color-border-dark: rgba(245, 241, 234, 0.14);
+
+  /* Compatibility tokens consumed by the React component theme. */
+  --color-navy: var(--color-steel-black);
+  --color-navy-deep: #0d0b09;
+  --color-charcoal: var(--color-steel-deep);
+  --color-ink: var(--color-text-muted);
+  --color-red: var(--color-rust);
+  --color-red-dark: var(--color-rust-dark);
 
   --font-body: "Inter", sans-serif;
   --font-display: "Oswald", sans-serif;
