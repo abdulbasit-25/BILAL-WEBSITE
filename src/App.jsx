@@ -85,16 +85,16 @@ const CONFIG = {
    the industry itself rather than a generic SaaS gradient.
    ============================================================ */
 const COLORS = {
-  navy: "#0B1D33",
-  navyDeep: "#061220",
-  steel: "#1F3A5F",
-  charcoal: "#12181F",
-  white: "#FFFFFF",
-  paper: "#EEF1F5",
-  ink: "#4B5563",
-  red: "#E63946",
-  redDark: "#C62B38",
-  amber: "#F4A81E",
+  navy: "var(--color-navy)",
+  navyDeep: "var(--color-navy-deep)",
+  steel: "var(--color-steel)",
+  charcoal: "var(--color-charcoal)",
+  white: "var(--color-white)",
+  paper: "var(--color-paper)",
+  ink: "var(--color-ink)",
+  red: "var(--color-red)",
+  redDark: "var(--color-red-dark)",
+  amber: "var(--color-amber)",
 };
 
 /* Sample lane pricing — illustrative only, not live rate data. */
@@ -3633,21 +3633,7 @@ export default function App() {
   }, [route]);
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
-        html { scroll-behavior: smooth; }
-        @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
-        a, button { cursor: pointer; }
-        input:focus { outline: 2px solid #E63946; outline-offset: 1px; }
-        a:focus-visible, button:focus-visible { outline: 2px solid #E63946; outline-offset: 2px; }
-        .skip-link {
-          position: absolute; left: -9999px; top: 0; z-index: 100;
-          background: #fff; color: #0B1D33; padding: 10px 16px;
-          font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px;
-        }
-        .skip-link:focus { left: 12px; top: 12px; }
-      `}</style>
+    <div>
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
@@ -3660,7 +3646,7 @@ export default function App() {
       <TopButton />
       <FloatingContactButton />
       <CookieBanner />
-      <div className="lg:hidden" style={{ height: 60 }} />
+      <div className="lg:hidden mobile-bottom-spacer" />
     </div>
   );
 }
